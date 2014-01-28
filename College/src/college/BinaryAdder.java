@@ -32,17 +32,17 @@ public class BinaryAdder {
 		int s = 0,cin = 0, xt,yt;
 		
 		for(int i = 0; i < len; i++){
-			xt = Integer.parseInt(xs.charAt(i) + "", 2);
-			yt = Integer.parseInt(ys.charAt(i) + "", 2);
+			xt = Integer.parseInt(xs.charAt(len-1-i) + "", 2);
+			yt = Integer.parseInt(ys.charAt(len-1-i) + "", 2);
 			
 			s = xt ^ yt ^ cin;
-			cin = (xt&cin) | (yt&cin) | (xt&yt);
+			cin = (xt & cin) | (yt & cin) | (xt & yt);
+			
 			sb.append(s);
 		}
-		sb.reverse();
 		sb.append(cin);
-		
-		System.out.println(sb.toString());
+		sb.reverse();
+	
 		int val = Integer.parseInt(sb.toString(), 2);
 		
 		System.out.println(val);
