@@ -40,6 +40,7 @@ public class BinaryAdder {
 			sb.append(s);
 		}
 		sb.reverse();
+		sb.append(cin);
 		
 		System.out.println(sb.toString());
 		int val = Integer.parseInt(sb.toString(), 2);

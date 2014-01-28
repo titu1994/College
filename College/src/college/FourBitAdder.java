@@ -99,7 +99,6 @@ public class FourBitAdder
     String xs = Integer.toBinaryString(firstNum);
 	String ys = Integer.toBinaryString(secondNum);
 	
-	
 	int xl = xs.length();
 	int yl = ys.length();
 	int len = xl > yl? xl : yl;
@@ -140,8 +139,8 @@ public class FourBitAdder
       else
         outputNumDisplay += (outputs[i] ? "1" : "0");
     }
-    System.out.println("numBits=" + numBits);
-    System.out.println("A=" + firstNumDisplay + " (" + firstNum + "), B=" + secondNumDisplay + " (" + secondNum + "), S=" + outputCarryDisplay + " " + outputNumDisplay + " (" + outputNum + ")");
+    
+    System.out.println("A=" + firstNumDisplay + " (" + Integer.toHexString(firstNum) + "), B=" + secondNumDisplay + " (" + Integer.toHexString(secondNum) + "), S=" + outputCarryDisplay + outputNumDisplay + " (" + Integer.toHexString(outputNum) + ")");
     return;
   }
  
