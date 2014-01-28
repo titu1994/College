@@ -45,7 +45,7 @@ public class BinaryAdder {
 	
 		int val = Integer.parseInt(sb.toString(), 2);
 		
-		System.out.println(val);
+		System.out.println(xs+" + "+ys+" in Hex is : "+Integer.toHexString(val));
 	}
 
 }
