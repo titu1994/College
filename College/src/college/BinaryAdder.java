@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 
 public class BinaryAdder {
 
-	
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		BufferedReader bb = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("Enter the 2 no in Hex");
@@ -16,6 +15,13 @@ public class BinaryAdder {
 		
 		String xs = Integer.toBinaryString(xi);
 		String ys = Integer.toBinaryString(yi);
+		
+		String hexSum = addHexStringInBinary(xs, ys);
+		
+		System.out.println(xs+" + "+ys+" in Hex is : "+ hexSum);
+	}
+	
+	private static String addHexStringInBinary(String xs, String ys){
 		
 		int xl = xs.length();
 		int yl = ys.length();
@@ -45,7 +51,7 @@ public class BinaryAdder {
 	
 		int val = Integer.parseInt(sb.toString(), 2);
 		
-		System.out.println(xs+" + "+ys+" in Hex is : "+Integer.toHexString(val));
+		return Integer.toHexString(val);
 	}
 
 }
