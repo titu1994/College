@@ -1,4 +1,4 @@
-package college;
+package college.sem4;
 
 import java.util.Arrays;
 import java.util.Collections;
