@@ -45,12 +45,13 @@ class FIFOReplacement {
 		BufferedReader bb = new BufferedReader(new InputStreamReader(System.in));
 		LinkedList<String> list = new LinkedList<String>();
 
+		System.out.println("Enter Page Size");
+		int pageSize = Integer.parseInt(bb.readLine());
+		
 		System.out.println("Input string of integers");
 		String a = bb.readLine();
 		String data[] = a.split(" ");
-
-		System.out.println("Enter Page Size");
-		int pageSize = Integer.parseInt(bb.readLine());
+		
 		int pos = 0;
 
 		for(int i = 0; i < data.length; i++){
@@ -154,20 +155,28 @@ class OptimalReplacement  {
 
 	public static int getPos(int currPos){
 		int indices[] = new int[pageSize];
-
-		for(int i = 0; i < pageSize; i++) {
-			indices[i] = list.lastIndexOf(data[currPos - pageSize + i + 1]);
-			if(indices[i] == -1) {
-				return currPos - pageSize + i + 1;
+		
+		
+		if(currPos > pageSize) {
+			for(int i = 0; i < pageSize; i++) {
+				indices[i] = list.lastIndexOf(data[currPos - pageSize + i + 1]);
+				if(indices[i] == -1) {
+					return currPos - pageSize + i + 1;
+				}
 			}
+			int lastIndex = -1;
+			for(int i = 0; i < pageSize; i++) {
+				if(lastIndex < indices[i]) 
+					lastIndex = indices[i];
+			}
+			if(lastIndex != -1)
+				return lastIndex;
 		}
-
-		int lastIndex = -1;
-		for(int i = 0; i < pageSize; i++) {
-			if(lastIndex < indices[i]) 
-				lastIndex = indices[i];
+		else {
+			return currPos;
 		}
-		return lastIndex;
-	}
+		return currPos;
+		
+	}	
 
 }
