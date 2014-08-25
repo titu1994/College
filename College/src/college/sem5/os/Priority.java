@@ -14,13 +14,13 @@ public class Priority {
 		pt = 0;
 	}
 
-	Priority(int x, int y, int z) {
-		bt = x;
-		at = y;
-		pt = z;
+	Priority(int bt, int at, int pt) {
+		this.bt = bt;
+		this.at = at;
+		this.pt = pt;
 	}
 
-	void t(Priority p2) {
+	public void t(Priority p2) {
 		pr = p2.at - at;
 	}
 }
