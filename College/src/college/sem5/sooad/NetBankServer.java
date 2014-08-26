@@ -128,6 +128,7 @@ public class NetBankServer {
 			pr.println(data.getSecurePassword());
 			pr.println(data.getCreditMaxLimit());
 			pr.println(data.getCreditConsumed());
+			pr.println(NetBankServerProtocols.serverReadyToSend);
 		}
 	}
 

@@ -82,7 +82,7 @@ public class NetBankClient {
 				}
 
 				handleUserChoice(client, pr);
-
+				
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -136,7 +136,8 @@ public class NetBankClient {
 						sb.append(from + "\n");
 						sb.append(amt + "\n");
 						pr.println(sb.toString());
-
+						pr.println(NetBankServerProtocols.clientReadyToSend);
+						
 					} catch (NumberFormatException | IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
