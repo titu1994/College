@@ -47,11 +47,11 @@ class FIFOReplacement {
 
 		System.out.println("Enter Page Size");
 		int pageSize = Integer.parseInt(bb.readLine());
-		
+
 		System.out.println("Input string of integers");
 		String a = bb.readLine();
 		String data[] = a.split(" ");
-		
+
 		int pos = 0;
 
 		for(int i = 0; i < data.length; i++){
@@ -60,6 +60,7 @@ class FIFOReplacement {
 			}
 			else {
 				if(!list.contains(data[i])) {
+					System.out.println("Page Fault : " + Arrays.toString(list.toArray()));
 					list.remove(pos);
 					list.add(pos, data[i]);
 					pos = (pos+1)%pageSize;
@@ -90,8 +91,11 @@ class LRUReplacement  {
 				System.out.println("Hit : " + queue);
 			}
 			else {
+				if(queue.size() >= size)
+					System.out.println("Page Fault : " + queue);
+				else 
+					System.out.println(queue);
 				queue.put(Integer.parseInt(data[i]), data[i]);
-				System.out.println(queue);
 			}
 		}
 		System.out.println("Final : " + queue);
@@ -139,10 +143,10 @@ class OptimalReplacement  {
 			}
 			else {
 				if(!list.contains(data[i])) {
+					System.out.println("Page Fault : " + Arrays.toString(list.toArray()));
 					pos = getPos(i%pageSize);
 					list.remove(pos);
 					list.add(pos, data[i]);
-
 				}
 				else {
 					System.out.println("Hit : " + Arrays.toString(list.toArray()));
@@ -155,8 +159,8 @@ class OptimalReplacement  {
 
 	public static int getPos(int currPos){
 		int indices[] = new int[pageSize];
-		
-		
+
+
 		if(currPos > pageSize) {
 			for(int i = 0; i < pageSize; i++) {
 				indices[i] = list.lastIndexOf(data[currPos - pageSize + i + 1]);
@@ -176,7 +180,7 @@ class OptimalReplacement  {
 			return currPos;
 		}
 		return currPos;
-		
+
 	}	
 
 }

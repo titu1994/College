@@ -16,7 +16,7 @@ public class NetBankAccountData implements Serializable{
 	private static final long serialVersionUID = 115511L;
 
 	private final long accountID;
-	private final String securePassword;
+	private String securePassword;
 	private double creditMaxLimit;
 	private double creditConsumed;
 
@@ -27,6 +27,10 @@ public class NetBankAccountData implements Serializable{
 
 	public String getSecurePassword() {
 		return securePassword;
+	}
+	
+	public void setSecurePassword(String securePassword) {
+		this.securePassword = securePassword;
 	}
 
 	public double getCreditMaxLimit() {
@@ -49,7 +53,7 @@ public class NetBankAccountData implements Serializable{
 		private static HashMap<Long, NetBankAccountData> map;
 
 		@SuppressWarnings("unchecked")
-		public HashMap<Long, NetBankAccountData> getDataStore() throws IOException {
+		public static HashMap<Long, NetBankAccountData> getDataStore() throws IOException {
 			if(map!= null)
 				return map;
 			else {
@@ -67,15 +71,15 @@ public class NetBankAccountData implements Serializable{
 			}
 		}
 
-		public void storeData() throws IOException {
-			FileOutputStream fos = new FileOutputStream("/data/account.ser", false);
+		public static void storeData() throws IOException {
+			FileOutputStream fos = new FileOutputStream("/database/account.ser", false);
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(map);
 			oos.close();
 			fos.close();
 		}
 
-		public boolean insertData(NetBankAccountData data) {
+		public static boolean insertData(NetBankAccountData data) {
 			try {
 				map = getDataStore();
 			} catch (IOException e) {
@@ -85,6 +89,12 @@ public class NetBankAccountData implements Serializable{
 			
 			if(!map.containsKey(data.accountID)) {
 				map.put(data.accountID, data);
+				try {
+					storeData();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				return true;
 			}
 			else {
@@ -92,7 +102,7 @@ public class NetBankAccountData implements Serializable{
 			}
 		}
 		
-		public boolean updateData(NetBankAccountData data) {
+		public static boolean updateData(NetBankAccountData data) {
 			try {
 				map = getDataStore();
 			} catch (IOException e) {
@@ -103,6 +113,12 @@ public class NetBankAccountData implements Serializable{
 			if(map.containsKey(data.accountID)) {
 				map.remove(data.accountID);
 				map.put(data.accountID, data);
+				try {
+					storeData();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				return true;
 			}
 			else {
@@ -110,7 +126,7 @@ public class NetBankAccountData implements Serializable{
 			}
 		}
 		
-		public boolean removeData(long id) {
+		public static boolean removeData(long id) {
 			try {
 				map = getDataStore();
 			} catch (IOException e) {
@@ -120,6 +136,12 @@ public class NetBankAccountData implements Serializable{
 			
 			if(map.containsKey(id)) {
 				map.remove(id);
+				try {
+					storeData();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				return true;
 			}
 			else {

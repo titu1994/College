@@ -43,11 +43,23 @@ public class NetBankTransactionData implements Serializable{
 		return transactionAmount;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("ID : " + transactionID + "\n");
+		sb.append("To : " + transactionToName + "\n");
+		sb.append("From : " + transactionFromName + "\n");
+		sb.append("Amount : " + transactionAmount + "\n\n");
+		return sb.toString();
+	}
+
+
+
 	public static class Database {
 		private static HashMap<Long, NetBankTransactionData> map;
 		
 		@SuppressWarnings("unchecked")
-		public HashMap<Long, NetBankTransactionData> getDataStore() throws IOException {
+		public static HashMap<Long, NetBankTransactionData> getDataStore() throws IOException {
 			if(map!= null)
 				return map;
 			else {
@@ -65,7 +77,7 @@ public class NetBankTransactionData implements Serializable{
 			}
 		}
 		
-		public void storeData() throws IOException {
+		public static void storeData() throws IOException {
 			FileOutputStream fos = new FileOutputStream("/database/transactions.ser", false);
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(map);
@@ -73,7 +85,7 @@ public class NetBankTransactionData implements Serializable{
 			fos.close();
 		}
 		
-		public boolean insertData(NetBankTransactionData data) {
+		public static boolean insertData(NetBankTransactionData data) {
 			try {
 				map = getDataStore();
 			} catch (IOException e) {
@@ -83,6 +95,12 @@ public class NetBankTransactionData implements Serializable{
 			
 			if(!map.containsKey(data.transactionID)) {
 				map.put(data.transactionID, data);
+				try {
+					storeData();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				return true;
 			}
 			else {
@@ -90,7 +108,7 @@ public class NetBankTransactionData implements Serializable{
 			}
 		}
 		
-		public boolean updateData(NetBankTransactionData data) {
+		public static boolean updateData(NetBankTransactionData data) {
 			try {
 				map = getDataStore();
 			} catch (IOException e) {
@@ -101,6 +119,12 @@ public class NetBankTransactionData implements Serializable{
 			if(map.containsKey(data.transactionID)) {
 				map.remove(data.transactionID);
 				map.put(data.transactionID, data);
+				try {
+					storeData();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				return true;
 			}
 			else {
@@ -108,7 +132,7 @@ public class NetBankTransactionData implements Serializable{
 			}
 		}
 		
-		public boolean removeData(long id) {
+		public static boolean removeData(long id) {
 			try {
 				map = getDataStore();
 			} catch (IOException e) {
@@ -118,14 +142,18 @@ public class NetBankTransactionData implements Serializable{
 			
 			if(map.containsKey(id)) {
 				map.remove(id);
+				try {
+					storeData();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				return true;
 			}
 			else {
 				return false;
 			}
 		}
-
-		
 	}
 	
 }
