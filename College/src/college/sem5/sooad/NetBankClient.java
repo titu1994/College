@@ -63,7 +63,6 @@ public class NetBankClient {
 				PrintWriter pr = new PrintWriter(new OutputStreamWriter(client.getOutputStream()), true);
 				BufferedReader bb = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-				
 				StringBuilder sb = new StringBuilder();
 
 				if((protocol = bb.readLine()).equals(NetBankServerProtocols.serverReadyToReceive)) {
@@ -110,7 +109,7 @@ public class NetBankClient {
 	
 	private void getSecureCredentials(Socket client, String data) {
 		synchronized (client) {
-			String arr[] = data.split("\n");
+			String arr[] = data.split("[\r\n]+");
 			password = arr[0];
 			creditLimit = Double.parseDouble(arr[1]);
 			creditConsumed = Double.parseDouble(arr[2]);

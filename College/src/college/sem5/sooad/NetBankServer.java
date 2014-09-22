@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -31,8 +32,7 @@ public class NetBankServer {
 		try {
 			server = new ServerSocket(NetBankServerProtocols.PORT, 50, InetAddress.getLocalHost());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
 		}
 		System.out.println("Server : Started");
 
@@ -79,7 +79,7 @@ public class NetBankServer {
 
 					System.out.println("Server : Recieving until client is ready to recieve");
 					while(!(protocol = bb.readLine()).equals(NetBankServerProtocols.clientReadyToRecieve)) {
-						sb.append(protocol);
+						sb.append(protocol + "\n");
 					}
 
 					//TODO: Parse sb here
@@ -129,7 +129,7 @@ public class NetBankServer {
 
 	private NetBankAccountData parseClientUserPass(Socket client, String input) {
 		synchronized (client) {
-			String arr[] = input.split("\n");
+			String arr[] = input.split("[\\r\n]+");
 			long id = Long.parseLong(arr[0]);
 			String password = arr[1];
 			String generatedPassword = NetBankUtils.getSecurePassword(password);
@@ -160,7 +160,7 @@ public class NetBankServer {
 				switch(choice) {
 				case 1: {
 					data = bb.readLine();
-					segs = data.split("\n");
+					segs = data.split("[\r\n]+");
 					NetBankTransactionData transaction = new NetBankTransactionData(Long.parseLong(segs[0]), 
 							segs[1], segs[2], Double.parseDouble(segs[3]));
 					NetBankTransactionData.Database.insertData(transaction);
@@ -223,7 +223,7 @@ public class NetBankServer {
 
 
 	public interface NetBankServerProtocols {
-		int PORT = 12121;
+		int PORT = 8888;
 		String localHost = "127.0.0.1";
 
 		String serverReadyToSend = "ServerSend";

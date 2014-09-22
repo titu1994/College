@@ -1,5 +1,6 @@
 package college.sem5.sooad;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -54,10 +55,15 @@ public class NetBankAccountData implements Serializable{
 
 		@SuppressWarnings("unchecked")
 		public static HashMap<Long, NetBankAccountData> getDataStore() throws IOException {
+			File f = new File("account.txt");
+			if(!f.exists()) {
+				f.createNewFile();
+			}
+			
 			if(map!= null)
 				return map;
 			else {
-				FileInputStream fos = new FileInputStream("/database/account.ser");
+				FileInputStream fos = new FileInputStream("account.txt");
 				ObjectInputStream oos = new ObjectInputStream(fos);
 				try {
 					map = (HashMap<Long, NetBankAccountData>) oos.readObject();
@@ -72,7 +78,13 @@ public class NetBankAccountData implements Serializable{
 		}
 
 		public static void storeData() throws IOException {
-			FileOutputStream fos = new FileOutputStream("/database/account.ser", false);
+			File f = new File("account.txt");
+			if(!f.exists() && !f.isDirectory()) { 
+				f.mkdir();
+				f.createNewFile();
+			}
+			
+			FileOutputStream fos = new FileOutputStream("account.txt", false);
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(map);
 			oos.close();
