@@ -8,31 +8,37 @@ public class DiningPhilosopherProblem {
 
 	public static void main(String args[]) throws IOException, NumberFormatException {
 		Scanner sc = new Scanner(System.in);
-		final Philosopher pholosoper = new Philosopher();
+		final Philosopher philosopher = new Philosopher();
 
 		Thread t1 = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-				pholosoper.eat(0);
-				pholosoper.eat(1);
+				philosopher.eat(0);
+				philosopher.eat(1);
 			}
 		});
 
 		Thread t2 = new Thread(new Runnable() {
 
 			@Override
-			public void run() {
-				pholosoper.eat(2);
-				pholosoper.eat(3);
-				pholosoper.eat(4);
+			public void run() {	
+				philosopher.eat(2);
+				philosopher.eat(3);
 			}
 		});
-		
-		
-		
+
+		Thread t3 = new Thread(new Runnable() {
+
+			@Override
+			public void run() {		
+				philosopher.eat(4);
+			}
+		});
+
 		t1.start();
 		t2.start();
+		t3.start();
 	}
 
 	public static void semaphoreWait(AtomicInteger semaphore) {
@@ -56,13 +62,13 @@ class Philosopher {
 	}
 
 	public void eat(int philosopher) {
-		for(int i = 0; i < 20; i++) {
-			
+		for(int i = 0; i < 2; i++) {
+			System.out.println("Philosopher " + ((philosopher % 5) + 1) + " is thinking.");
 
 			DiningPhilosopherProblem.semaphoreWait(forks[i % 5]);
 			DiningPhilosopherProblem.semaphoreWait(forks[(i + 1) % 5]);
-			System.out.println("Philosopher " + i + " is thinking.");
-			System.out.println("Philosopher " + i + " is eating.");
+
+			System.out.println("Philosopher " + ((philosopher % 5) + 1) + " is eating.");
 
 			DiningPhilosopherProblem.semaphoreNotify(forks[(i + 1) % 5]);
 			DiningPhilosopherProblem.semaphoreNotify(forks[i % 5]);
