@@ -22,7 +22,7 @@ public class DiningPhilosopherProblem {
 		Thread t2 = new Thread(new Runnable() {
 
 			@Override
-			public void run() {	
+			public void run() {
 				philosopher.eat(2);
 				philosopher.eat(3);
 			}
@@ -35,7 +35,7 @@ public class DiningPhilosopherProblem {
 				philosopher.eat(4);
 			}
 		});
-
+		
 		t1.start();
 		t2.start();
 		t3.start();
