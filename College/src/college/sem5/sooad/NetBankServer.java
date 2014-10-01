@@ -90,13 +90,14 @@ public class NetBankServer {
 					pr.println(NetBankServerProtocols.serverReadyToSend);
 
 					//TODO: Send data here
+					//Note : data may be null, meaning it doesn't exist in DB. Client must handle that
 					sendClientAllData(client, pr, data);
 
+					//Server ready to handle next instruction
 					System.out.println("Server : Ready to recieve additional requests");
 					pr.println(NetBankServerProtocols.serverReadyToReceive);
 
 					handleUserChoice(client, pr, bb);
-
 
 					if((protocol = bb.readLine()).equals(NetBankServerProtocols.allClientsServed)) {
 						System.out.println("Server : Stopping");
@@ -121,9 +122,17 @@ public class NetBankServer {
 
 	private void sendClientAllData(Socket client, PrintWriter pr, NetBankAccountData data) {
 		synchronized (client) {
-			pr.println(data.getSecurePassword());
-			pr.println(data.getCreditMaxLimit());
-			pr.println(data.getCreditConsumed());
+			//If Data exists
+			if(data != null) {
+				pr.println(data.getSecurePassword());
+				pr.println(data.getCreditMaxLimit());
+				pr.println(data.getCreditConsumed());
+			}
+			else { //If Data does not exist
+				pr.println(NetBankServerProtocols.serverError);
+				pr.println(NetBankServerProtocols.errorIdDoesNotExist);
+			}
+			
 		}
 	}
 
@@ -134,19 +143,13 @@ public class NetBankServer {
 			String password = arr[1];
 			String generatedPassword = NetBankUtils.getSecurePassword(password);
 			NetBankAccountData data = null; 
-			try {
-				data = DataBase.getDataStore().get(id);
-				if(data.getSecurePassword().equals(generatedPassword)) {
-					return data;
-				}
-				else {
-					return null;
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			data = DataBase.getDataStore(id);
+			if(data != null && data.getSecurePassword().equals(generatedPassword)) {
+				return data;
 			}
-			return null;
+			else {
+				return null;
+			}
 		}
 	}
 
@@ -170,11 +173,10 @@ public class NetBankServer {
 					break;
 				}
 				case 2: {
-					HashMap<Long, NetBankTransactionData> transactions = NetBankTransactionData.Database.getDataStore();
+					NetBankTransactionData datas[] = NetBankTransactionData.Database.getDataStore();
 
-					for(Map.Entry<Long, NetBankTransactionData> entry : transactions.entrySet()) {
-						System.out.println(entry.getValue());
-					}
+					for(NetBankTransactionData d : datas) 
+						System.out.println(d);
 					break;
 				}
 				case 3: {
@@ -182,7 +184,7 @@ public class NetBankServer {
 					String generatedPassword = NetBankUtils.getSecurePassword(oldPass);
 					NetBankAccountData account = null; 
 					try {
-						account = DataBase.getDataStore().get(id);
+						account = DataBase.getDataStore(id);
 						if(account.getSecurePassword().equals(generatedPassword)) {
 							pr.println(NetBankServerProtocols.serverReadyToReceive);
 							String newPass = bb.readLine();
@@ -229,6 +231,10 @@ public class NetBankServer {
 		String serverReadyToSend = "ServerSend";
 		String serverReadyToReceive = "ServerReceive";
 		String serverFinishCommunication = "ServerFinished";
+		
+		String serverError = "ServerError";
+		String errorIdDoesNotExist = "NoMatchesForID";
+		
 
 		String clientReadyToSend = "ClientSend";
 		String clientReadyToRecieve = "ClientRecieve";

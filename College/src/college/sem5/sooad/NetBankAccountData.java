@@ -1,13 +1,6 @@
 package college.sem5.sooad;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 
@@ -24,8 +17,18 @@ public class NetBankAccountData implements Serializable{
 	private double creditConsumed;
 
 	public NetBankAccountData(long accountID, String securePassword) {
+		this(accountID, securePassword, 0, 0);
+	}
+	
+	public NetBankAccountData(long accountID, String securePassword, double creditMax, double creditConsumed) {
 		this.accountID = accountID;
 		this.securePassword = securePassword;
+		this.creditMaxLimit = creditMax;
+		this.creditConsumed = creditConsumed;
+	}
+	
+	public long getAccountID() {
+		return accountID;
 	}
 
 	public String getSecurePassword() {
@@ -54,25 +57,24 @@ public class NetBankAccountData implements Serializable{
 
 	public static class DataBase {
 		
-		@SuppressWarnings("unchecked")
-		public static HashMap<Long, NetBankAccountData> getDataStore() throws IOException {
-			
+		public static NetBankAccountData[] getDataStore() {
+			return NetBankUtils.queryAccount();
 		}
-
-		public static void storeData() throws IOException {
-			
+		
+		public static NetBankAccountData getDataStore(long id) {
+			return NetBankUtils.queryAccount(id);
 		}
 
 		public static boolean insertData(NetBankAccountData data) {
-			
+			return NetBankUtils.insertData(data);
 		}
 		
 		public static boolean updateData(NetBankAccountData data) {
-			
+			return NetBankUtils.updateData(data);
 		}
 		
 		public static boolean removeData(long id) {
-			
+			return NetBankUtils.deleteAccount(id);
 		}
 
 	}

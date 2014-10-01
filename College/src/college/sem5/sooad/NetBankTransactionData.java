@@ -1,10 +1,6 @@
 package college.sem5.sooad;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 
@@ -53,30 +49,26 @@ public class NetBankTransactionData implements Serializable{
 		return sb.toString();
 	}
 
-
-
 	public static class Database {
 		
-		
-		@SuppressWarnings("unchecked")
-		public static HashMap<Long, NetBankTransactionData> getDataStore() throws IOException {
-			
+		public static NetBankTransactionData[] getDataStore() {
+			return NetBankUtils.queryTransaction();
 		}
 		
-		public static void storeData() throws IOException {
-			
+		public static NetBankTransactionData getDataStore(long id){
+			return NetBankUtils.queryTransaction(id);
 		}
 		
 		public static boolean insertData(NetBankTransactionData data) {
-			
+			return NetBankUtils.insertData(data);
 		}
 		
 		public static boolean updateData(NetBankTransactionData data) {
-			
+			return NetBankUtils.updateData(data);
 		}
 		
 		public static boolean removeData(long id) {
-			
+			return NetBankUtils.deleteTransaction(id);
 		}
 	}
 	
