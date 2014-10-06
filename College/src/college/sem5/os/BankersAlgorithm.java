@@ -1,7 +1,7 @@
 package college.sem5.os;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Scanner;
 
 public class BankersAlgorithm {
 
@@ -20,18 +20,14 @@ public class BankersAlgorithm {
 
 		System.out.println("Enter the Allocated Matrix elements");
 		for(int i = 0; i < n; i++) {
-			System.out.println("Process " + (i+1));
 			for(int j = 0; j < m; j++) {
-				System.out.println("Resource " + (j+1));
 				alloc[i][j] = sc.nextInt();
 			}
 		}
 
 		System.out.println("Enter the Max Matrix elements");
 		for(int i = 0; i < n; i++) {
-			System.out.println("Process " + (i+1));
 			for(int j = 0; j < m; j++) {
-				System.out.println("Resource " + (j+1));
 				max[i][j] = sc.nextInt();
 			}
 		}
