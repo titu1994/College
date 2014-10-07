@@ -1,7 +1,5 @@
 package college.sem5.sooad;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -34,7 +32,7 @@ public class NetBankUtils {
 	private static Connection conn;
 
 	public static String getSecurePassword(String insecurePassword) {
-		String generatedPassword = null;
+		//String generatedPassword = null;
 		/*try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			md.update(insecurePassword.getBytes());
@@ -244,10 +242,9 @@ public class NetBankUtils {
 			ResultSet result = stmt.executeQuery();
 			result.first();
 			String tranTo = result.getString(COL_TRANTONAME);
-			String tranFrom = result.getString(COL_TRANFROMNAME);
 			double tranAmount = result.getDouble(COL_TRANSAMMOUNT);
 			
-			NetBankTransactionData data = new NetBankTransactionData(transactionID, tranTo, tranFrom, tranAmount);
+			NetBankTransactionData data = new NetBankTransactionData(transactionID, tranTo, tranAmount);
 			return data;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -265,7 +262,6 @@ public class NetBankUtils {
 			ResultSet result = stmt.executeQuery();
 			long transID;
 			String transTo;
-			String transFrom;
 			double transAmt;
 			NetBankTransactionData data;
 			
@@ -273,9 +269,8 @@ public class NetBankUtils {
 			while(result.next()) {
 				transID = result.getLong(COL_TRANID);
 				transTo = result.getString(COL_TRANTONAME);
-				transFrom = result.getString(COL_TRANFROMNAME);
 				transAmt = result.getDouble(COL_TRANSAMMOUNT);
-				data = new NetBankTransactionData(transID, transTo, transFrom, transAmt);
+				data = new NetBankTransactionData(transID, transTo, transAmt);
 				
 				list.add(data);
 			}

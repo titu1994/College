@@ -8,9 +8,6 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -165,7 +162,7 @@ public class NetBankServer {
 					data = bb.readLine();
 					segs = data.split("[\r\n]+");
 					NetBankTransactionData transaction = new NetBankTransactionData(Long.parseLong(segs[0]), 
-							segs[1], segs[2], Double.parseDouble(segs[3]));
+							segs[1]	, Double.parseDouble(segs[2]));
 					NetBankTransactionData.Database.insertData(transaction);
 
 					if((protocol = bb.readLine()).equals(NetBankServerProtocols.clientReadyToRecieve))

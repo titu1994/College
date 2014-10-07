@@ -1,8 +1,6 @@
 package college.sem5.sooad;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
 
 public class NetBankTransactionData implements Serializable{
 
@@ -15,7 +13,7 @@ public class NetBankTransactionData implements Serializable{
 	public final String transactionToName;
 	public final double transactionAmount;
 	
-	public NetBankTransactionData(long transactionID, String transactionToName, String transactionFromName, double transactionAmount) {
+	public NetBankTransactionData(long transactionID, String transactionToName, double transactionAmount) {
 		this.transactionID = transactionID;
 		this.transactionAmount = transactionAmount;
 		this.transactionToName = transactionToName;
