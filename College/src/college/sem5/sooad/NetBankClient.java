@@ -178,14 +178,16 @@ public class NetBankClient {
 						oldPass = br.readLine();
 						newPass = br.readLine();
 
-						if(oldPass != null && oldPass.length() != 0) {
-							pr.println(oldPass);
-						}
-						else if(oldPass.equals(newPass)){
-							System.out.println("New password matches old one");
-						}
-						else {
-							System.out.println("Enter old password correctly.");
+						if(bb.readLine().equals(NetBankServerProtocols.serverReadyToReceive)) {
+							if(oldPass != null && oldPass.length() != 0) {
+								pr.println(oldPass);
+							}
+							else if(oldPass.equals(newPass)){
+								System.out.println("New password matches old one");
+							}
+							else {
+								System.out.println("Enter old password correctly.");
+							}
 						}
 
 						if((protocol = bb.readLine()).equals(NetBankServerProtocols.serverReadyToReceive)) {
