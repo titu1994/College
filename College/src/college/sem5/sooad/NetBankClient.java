@@ -178,7 +178,6 @@ public class NetBankClient {
 						oldPass = br.readLine();
 						newPass = br.readLine();
 
-
 						if(oldPass != null && oldPass.length() != 0) {
 							pr.println(oldPass);
 						}

@@ -18,7 +18,7 @@ public class NetBankServer {
 	private static ExecutorService executor;
 	private ServerSocket server = null;
 	private String protocol;
-	
+
 	private long id;
 
 	public NetBankServer() {
@@ -29,7 +29,7 @@ public class NetBankServer {
 		try {
 			server = new ServerSocket(NetBankServerProtocols.PORT, 50, InetAddress.getLocalHost());
 		} catch (IOException e) {
-			
+
 		}
 		System.out.println("Server : Started");
 
@@ -53,10 +53,10 @@ public class NetBankServer {
 		}
 	}
 
+	boolean clientWaiting = true;
 	private void serveClient() {
 
 		Socket client;
-		boolean clientWaiting = true;
 
 		try {
 
@@ -96,11 +96,7 @@ public class NetBankServer {
 
 					handleServerChoice(client, pr, bb);
 
-					if((protocol = bb.readLine()).equals(NetBankServerProtocols.allClientsServed)) {
-						System.out.println("Server : Stopping");
-						clientWaiting = false;
-						break;
-					} else if (protocol.equals(NetBankServerProtocols.clientFinishCommunication)) {
+					if (protocol.equals(NetBankServerProtocols.clientFinishCommunication)) {
 						System.out.println("Server : Acknowledge end of communication");
 						pr.println(NetBankServerProtocols.serverFinishCommunication);
 					}
@@ -128,7 +124,7 @@ public class NetBankServer {
 				pr.println(NetBankServerProtocols.serverError);
 				pr.println(NetBankServerProtocols.errorIdDoesNotExist);
 			}
-			
+
 		}
 	}
 
@@ -185,7 +181,7 @@ public class NetBankServer {
 						if(account.getSecurePassword().equals(generatedPassword)) {
 							pr.println(NetBankServerProtocols.serverReadyToReceive);
 							String newPass = bb.readLine();
-							
+
 							account.setSecurePassword(NetBankUtils.getSecurePassword(newPass));
 							DataBase.updateData(account);
 						}
@@ -199,7 +195,9 @@ public class NetBankServer {
 					break;
 				}
 				default: {
-
+					System.out.println("Server : Stopping");
+					clientWaiting = false;
+					break;
 				}
 
 				}
@@ -228,10 +226,10 @@ public class NetBankServer {
 		String serverReadyToSend = "ServerSend";
 		String serverReadyToReceive = "ServerReceive";
 		String serverFinishCommunication = "ServerFinished";
-		
+
 		String serverError = "ServerError";
 		String errorIdDoesNotExist = "NoMatchesForID";
-		
+
 
 		String clientReadyToSend = "ClientSend";
 		String clientReadyToRecieve = "ClientRecieve";
