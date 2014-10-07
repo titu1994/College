@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -63,8 +64,6 @@ public class NetBankClient {
 				PrintWriter pr = new PrintWriter(new OutputStreamWriter(client.getOutputStream()), true);
 				BufferedReader bb = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-				StringBuilder sb = new StringBuilder();
-
 				//Send User credentials to Server to authenticate
 				if((protocol = bb.readLine()).equals(NetBankServerProtocols.serverReadyToReceive)) {
 					sendCredentialsToUser(client, pr);
@@ -72,10 +71,8 @@ public class NetBankClient {
 
 				//Recieve full data from server 
 				if((protocol = bb.readLine()).equals(NetBankServerProtocols.serverReadyToSend)) {
-					while(!(protocol = bb.readLine()).equals(NetBankServerProtocols.serverReadyToReceive)) {
-						sb.append(protocol);
-					}
-					getSecureCredentials(client, sb.toString(), pr);
+					String data = bb.readLine();
+					getSecureCredentials(client, data , pr);
 				}
 
 				handleUserChoice(client, pr, bb);
@@ -111,11 +108,13 @@ public class NetBankClient {
 
 	private void getSecureCredentials(Socket client, String data, PrintWriter pr) {
 		synchronized (client) {
-			String arr[] = data.split("[\r\n]+");
+			String arr[] = data.split(",");
 			if(NetBankServerProtocols.serverError.equals(arr[0])) {
 				if(NetBankServerProtocols.errorIdDoesNotExist.equals(arr[1])) {
 					//TODO: Handle client if Account does not exist
 					//For now immediately create a new account:
+					System.out.println("Client : Sending data to create new account.");
+					pr.println(NetBankClientProtocols.clientAddAccount);
 					pr.println(accountID);
 					pr.println(password);
 					

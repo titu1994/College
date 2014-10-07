@@ -94,6 +94,7 @@ public class NetBankServer {
 				while(clientWaiting) {
 					handleServerChoice(client, pr, bb);
 				}
+				NetBankUtils.closeConnection();
 				pr.close();
 				bb.close();
 				client.close();
@@ -109,23 +110,22 @@ public class NetBankServer {
 		synchronized (client) {
 			//If Data exists
 			if(data != null) {
-				pr.println(data.getCreditMaxLimit());
-				pr.println(data.getCreditConsumed());
+				System.out.println("Server : Sending the Account data");
+				pr.println(data.getCreditMaxLimit()+ "," + data.getCreditConsumed());
 			}
 			else { //If Data does not exist
-				pr.println(NetBankServerProtocols.serverError);
-				pr.println(NetBankServerProtocols.errorIdDoesNotExist);
+				System.out.println("Server : Account data does not exist. Creating new account.");
+				pr.println(NetBankServerProtocols.serverError + "," + NetBankServerProtocols.errorIdDoesNotExist);
 				
 				String protocol = "";
 				try {
 					if((protocol = bb.readLine()).equals(NetBankClientProtocols.clientAddAccount)) {
+						System.out.println("Server : Accepting id and password for new account.");
 						long id = Long.parseLong(bb.readLine());
 						String pass = bb.readLine();
 						NetBankAccountData acc = new NetBankAccountData(id, pass);
 						NetBankAccountData.DataBase.insertData(acc);
-					}
-					else {
-						System.out.println("Server : Account not found");
+						System.out.println("Server : New account created.");
 					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -139,8 +139,10 @@ public class NetBankServer {
 	private NetBankAccountData parseClientUserPass(Socket client, String input) {
 		synchronized (client) {
 			String arr[] = input.split("[\\r\n]+");
+
 			long id = Long.parseLong(arr[0]);
 			String password = arr[1];
+			//System.out.println("ID : " + id + " Pass : " + password);
 			String generatedPassword = NetBankUtils.getSecurePassword(password);
 			NetBankAccountData data = null; 
 			data = DataBase.getDataStore(id);
@@ -148,7 +150,7 @@ public class NetBankServer {
 				return data;
 			}
 			else {
-				System.out.println("No data was found");
+				System.out.println("Server : No data was found");
 				return null;
 			}
 		}
