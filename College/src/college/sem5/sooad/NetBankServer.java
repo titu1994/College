@@ -124,7 +124,6 @@ public class NetBankServer {
 		synchronized (client) {
 			//If Data exists
 			if(data != null) {
-				pr.println(data.getSecurePassword());
 				pr.println(data.getCreditMaxLimit());
 				pr.println(data.getCreditConsumed());
 			}
@@ -148,6 +147,7 @@ public class NetBankServer {
 				return data;
 			}
 			else {
+				System.out.println("No data was found");
 				return null;
 			}
 		}
