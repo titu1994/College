@@ -11,7 +11,7 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 public class ClientUI extends JFrame {
-	private static final long serialVersionUID = 151351L;
+	private static final long serialVersionUID = 12321L;
 	private static ClientUI ui;
 
 	private static NetBankServer server;

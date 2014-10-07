@@ -35,7 +35,7 @@ public class NetBankUtils {
 
 	public static String getSecurePassword(String insecurePassword) {
 		String generatedPassword = null;
-		try {
+		/*try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			md.update(insecurePassword.getBytes());
 			byte[] bytes = md.digest();
@@ -47,8 +47,8 @@ public class NetBankUtils {
 		} 
 		catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
-		}
-		return generatedPassword;
+		}*/
+		return insecurePassword;
 	}
 
 	public static Connection connect() {
