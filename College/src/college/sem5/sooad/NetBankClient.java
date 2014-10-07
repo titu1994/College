@@ -75,7 +75,7 @@ public class NetBankClient {
 					while(!(protocol = bb.readLine()).equals(NetBankServerProtocols.serverReadyToReceive)) {
 						sb.append(protocol);
 					}
-					getSecureCredentials(client, sb.toString());
+					getSecureCredentials(client, sb.toString(), pr);
 				}
 
 				handleUserChoice(client, pr, bb);
@@ -109,13 +109,15 @@ public class NetBankClient {
 		}
 	}
 
-	private void getSecureCredentials(Socket client, String data) {
+	private void getSecureCredentials(Socket client, String data, PrintWriter pr) {
 		synchronized (client) {
 			String arr[] = data.split("[\r\n]+");
 			if(NetBankServerProtocols.serverError.equals(arr[0])) {
 				if(NetBankServerProtocols.errorIdDoesNotExist.equals(arr[1])) {
 					//TODO: Handle client if Account does not exist
 					//For now immediately create a new account:
+					pr.println(accountID);
+					pr.println(password);
 					
 				}
 			}
@@ -262,6 +264,8 @@ public class NetBankClient {
 
 
 	public interface NetBankClientProtocols {
+		String clientAddAccount = "clientAddAccount";
+		
 		String clientAlterCredentials = "clientAlterCredentials";
 		String clientAddTransaction = "clientAddTransaction";
 		String clientViewAllTransactions = "clientViewAllTransactions";

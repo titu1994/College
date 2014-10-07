@@ -1,13 +1,8 @@
 package college.sem5.sooad;
 
-import java.io.Serializable;
 
-public class NetBankTransactionData implements Serializable{
+public class NetBankTransactionData {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 151451L;
 
 	public final long transactionID;
 	public final long userID;

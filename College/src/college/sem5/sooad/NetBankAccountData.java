@@ -1,15 +1,7 @@
 package college.sem5.sooad;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashMap;
 
-public class NetBankAccountData implements Serializable{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 115511L;
+public class NetBankAccountData {
 
 	private final long accountID;
 	private String securePassword;
@@ -17,7 +9,7 @@ public class NetBankAccountData implements Serializable{
 	private double creditConsumed;
 
 	public NetBankAccountData(long accountID, String securePassword) {
-		this(accountID, securePassword, 0, 0);
+		this(accountID, securePassword, 10000, 0);
 	}
 	
 	public NetBankAccountData(long accountID, String securePassword, double creditMax, double creditConsumed) {
