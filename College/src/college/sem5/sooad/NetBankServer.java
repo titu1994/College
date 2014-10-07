@@ -97,7 +97,7 @@ public class NetBankServer {
 					System.out.println("Server : Ready to recieve additional requests");
 					pr.println(NetBankServerProtocols.serverReadyToReceive);
 
-					handleUserChoice(client, pr, bb);
+					handleServerChoice(client, pr, bb);
 
 					if((protocol = bb.readLine()).equals(NetBankServerProtocols.allClientsServed)) {
 						System.out.println("Server : Stopping");
@@ -153,7 +153,7 @@ public class NetBankServer {
 		}
 	}
 
-	private void handleUserChoice(Socket client, PrintWriter pr, BufferedReader bb) throws IOException {
+	private void handleServerChoice(Socket client, PrintWriter pr, BufferedReader bb) throws IOException {
 		synchronized (client) {
 			String data = null;
 			String segs[] = null;
