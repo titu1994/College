@@ -26,7 +26,6 @@ public class NetBankUtils {
 	
 	private static final String COL_TRANID = "transactionID";
 	private static final String COL_TRANTONAME = "transactionToName";
-	private static final String COL_TRANFROMNAME = "transactionFromName";
 	private static final String COL_TRANSAMMOUNT = "transactionAmount";
 	
 	private static Connection conn;
@@ -93,11 +92,11 @@ public class NetBankUtils {
 	public static boolean insertData(NetBankTransactionData data) {
 		conn = connect();
 		try {
-			String sql = "insert into " + TABLE_TRANSACTIONS + " values(?,?,?,?)";
+			String sql = "insert into " + TABLE_TRANSACTIONS + " values(?,?,?)";
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setLong(1, data.getTransactionID());
 			stmt.setString(2, data.getTransactionToName());
-			stmt.setDouble(4, data.getTransactionAmount());
+			stmt.setDouble(3, data.getTransactionAmount());
 			
 			stmt.executeQuery();
 			return true;
@@ -130,12 +129,12 @@ public class NetBankUtils {
 	public static boolean updateData(NetBankTransactionData data) {
 		conn = connect();
 		try {
-			String sql = "update " + TABLE_TRANSACTIONS + " set " + COL_TRANID + " = ? , " + COL_TRANTONAME + " = ? , " + COL_TRANFROMNAME + " = ? , " + COL_TRANSAMMOUNT + " = ? where " + COL_TRANID + " = ?";
+			String sql = "update " + TABLE_TRANSACTIONS + " set " + COL_TRANID + " = ? , " + COL_TRANTONAME + " = ? , " + COL_TRANSAMMOUNT + " = ? where " + COL_TRANID + " = ?";
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setLong(1, data.getTransactionID());
 			stmt.setString(2, data.getTransactionToName());
-			stmt.setDouble(4, data.getTransactionAmount());
-			stmt.setLong(5, data.getTransactionID());
+			stmt.setDouble(3, data.getTransactionAmount());
+			stmt.setLong(4, data.getTransactionID());
 			
 			stmt.executeQuery();
 			return true;
