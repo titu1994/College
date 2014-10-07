@@ -99,7 +99,6 @@ public class NetBankUtils {
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setLong(1, data.getTransactionID());
 			stmt.setString(2, data.getTransactionToName());
-			stmt.setString(3, data.getTransactionFromName());
 			stmt.setDouble(4, data.getTransactionAmount());
 			
 			stmt.executeQuery();
@@ -137,7 +136,6 @@ public class NetBankUtils {
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setLong(1, data.getTransactionID());
 			stmt.setString(2, data.getTransactionToName());
-			stmt.setString(3, data.getTransactionFromName());
 			stmt.setDouble(4, data.getTransactionAmount());
 			stmt.setLong(5, data.getTransactionID());
 			

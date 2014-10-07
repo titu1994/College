@@ -79,7 +79,7 @@ public class NetBankClient {
 				}
 
 				handleUserChoice(client, pr, bb);
-				
+
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -100,7 +100,7 @@ public class NetBankClient {
 		}
 		return null;
 	}
-	
+
 	private void sendCredentialsToUser(Socket client, PrintWriter pr) {
 		synchronized (client) {
 			pr.println(accountID);
@@ -108,7 +108,7 @@ public class NetBankClient {
 			pr.println(NetBankServerProtocols.clientReadyToRecieve);
 		}
 	}
-	
+
 	private void getSecureCredentials(Socket client, String data) {
 		synchronized (client) {
 			String arr[] = data.split("[\r\n]+");
@@ -121,7 +121,7 @@ public class NetBankClient {
 				creditLimit = Double.parseDouble(arr[0]);
 				creditConsumed = Double.parseDouble(arr[1]);
 			}
-			
+
 		}
 	}
 
@@ -148,19 +148,17 @@ public class NetBankClient {
 					try {
 						long id = Long.parseLong(br.readLine());
 						String to = br.readLine();
-						String from = br.readLine();
 						double amt = Double.parseDouble(br.readLine());
 
 						StringBuilder sb = new StringBuilder();
 						pr.println(NetBankClientProtocols.clientAddTransaction);
 						sb.append(id + "\n");
 						sb.append(to + "\n");
-						sb.append(from + "\n");
 						sb.append(amt + "\n");
 						pr.println(sb.toString());
 						pr.println(NetBankServerProtocols.clientReadyToRecieve);
-						
-						
+
+
 					} catch (NumberFormatException | IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -179,14 +177,14 @@ public class NetBankClient {
 					try {
 						oldPass = br.readLine();
 						newPass = br.readLine();
-						
+
 						if(oldPass != null && oldPass.length() != 0) {
 							pr.println(oldPass);
 						}
 						else {
 							System.out.println("Enter old password correctly.");
 						}
-						
+
 						if((protocol = bb.readLine()).equals(NetBankServerProtocols.serverReadyToReceive)) {
 							if(newPass != null && newPass.length() != 0)
 								pr.println(newPass);
@@ -198,12 +196,12 @@ public class NetBankClient {
 						else {
 							System.out.println("Old password did not match or was not found.");
 						}
-						
+
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
+
 					break;
 				}
 				default: {
@@ -227,8 +225,8 @@ public class NetBankClient {
 		}
 	}
 
-	
-	
+
+
 
 	public interface NetBankClientProtocols {
 		String clientAlterCredentials = "clientAlterCredentials";

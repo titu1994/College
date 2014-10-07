@@ -13,14 +13,12 @@ public class NetBankTransactionData implements Serializable{
 
 	public final long transactionID;
 	public final String transactionToName;
-	public final String transactionFromName;
 	public final double transactionAmount;
 	
 	public NetBankTransactionData(long transactionID, String transactionToName, String transactionFromName, double transactionAmount) {
 		this.transactionID = transactionID;
 		this.transactionAmount = transactionAmount;
 		this.transactionToName = transactionToName;
-		this.transactionFromName = transactionFromName;
 	}
 
 	public long getTransactionID() {
@@ -29,10 +27,6 @@ public class NetBankTransactionData implements Serializable{
 
 	public String getTransactionToName() {
 		return transactionToName;
-	}
-
-	public String getTransactionFromName() {
-		return transactionFromName;
 	}
 
 	public double getTransactionAmount() {
@@ -44,7 +38,6 @@ public class NetBankTransactionData implements Serializable{
 		StringBuilder sb = new StringBuilder();
 		sb.append("ID : " + transactionID + "\n");
 		sb.append("To : " + transactionToName + "\n");
-		sb.append("From : " + transactionFromName + "\n");
 		sb.append("Amount : " + transactionAmount + "\n\n");
 		return sb.toString();
 	}
