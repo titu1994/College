@@ -115,6 +115,8 @@ public class NetBankClient {
 			if(NetBankServerProtocols.serverError.equals(arr[0])) {
 				if(NetBankServerProtocols.errorIdDoesNotExist.equals(arr[1])) {
 					//TODO: Handle client if Account does not exist
+					//For now immediately create a new account:
+					
 				}
 			}
 			else {
@@ -153,6 +155,7 @@ public class NetBankClient {
 						StringBuilder sb = new StringBuilder();
 						pr.println(NetBankClientProtocols.clientAddTransaction);
 						sb.append(id + "\n");
+						sb.append(accountID + "\n");
 						sb.append(to + "\n");
 						sb.append(amt + "\n");
 						pr.println(sb.toString());
@@ -168,7 +171,33 @@ public class NetBankClient {
 				}
 				case 2: {
 					pr.println(NetBankClientProtocols.clientViewAllTransactions);
+					pr.println(accountID);
+					
+					StringBuilder sb = new StringBuilder();
+					String protocol = "";
+					
+					try {
+						while(!(protocol = bb.readLine()).equals(NetBankServerProtocols.serverReadyToReceive)) {
+							sb.append(protocol);
+						}
+						
+						String data = sb.substring(0, sb.length()-1);
+						String[] rawDatas = data.split(",");
+						
+						NetBankTransactionData datas[] = new NetBankTransactionData[rawDatas.length];
+						String temp[] = null;
+						for(int i = 0; i < rawDatas.length; i++) {
+							temp = rawDatas[i].split("[\r\n]+");
+							datas[i] = new NetBankTransactionData(temp[0], temp[1], temp[2], temp[3]);
+						}
+						
+						//TODO: Display datas[] to the user
 
+						
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					break;
 				}
 				case 3: {

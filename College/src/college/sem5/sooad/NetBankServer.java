@@ -149,8 +149,8 @@ private void handleServerChoice(Socket client, PrintWriter pr, BufferedReader bb
 			case 1: {
 				data = bb.readLine();
 				segs = data.split("[\\r\n]+");
-				NetBankTransactionData transaction = new NetBankTransactionData(Long.parseLong(segs[0]), 
-						segs[1]	, Double.parseDouble(segs[2]));
+				NetBankTransactionData transaction = new NetBankTransactionData(Long.parseLong(segs[0]), Long.parseLong(segs[1]),
+						segs[2]	, Double.parseDouble(segs[2]));
 				NetBankTransactionData.Database.insertData(transaction);
 
 				if((protocol = bb.readLine()).equals(NetBankServerProtocols.clientReadyToRecieve))
@@ -158,10 +158,14 @@ private void handleServerChoice(Socket client, PrintWriter pr, BufferedReader bb
 				break;
 			}
 			case 2: {
-				NetBankTransactionData datas[] = NetBankTransactionData.Database.getDataStore();
+				long accid = Long.parseLong(bb.readLine());
+				NetBankTransactionData datas[] = NetBankTransactionData.Database.getDataStore(accid);
 
+				//TODO: Send data to client to display
 				for(NetBankTransactionData d : datas) 
-					System.out.println(d);
+					pr.println(d);
+				
+				pr.println(NetBankServerProtocols.serverReadyToReceive);
 				break;
 			}
 			case 3: {

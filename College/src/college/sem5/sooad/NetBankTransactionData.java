@@ -10,13 +10,26 @@ public class NetBankTransactionData implements Serializable{
 	private static final long serialVersionUID = 151451L;
 
 	public final long transactionID;
+	public final long userID;
 	public final String transactionToName;
 	public final double transactionAmount;
 	
-	public NetBankTransactionData(long transactionID, String transactionToName, double transactionAmount) {
+	public NetBankTransactionData(long transactionID, long userID, String transactionToName, double transactionAmount) {
 		this.transactionID = transactionID;
-		this.transactionAmount = transactionAmount;
+		this.userID = userID;
 		this.transactionToName = transactionToName;
+		this.transactionAmount = transactionAmount;
+	}
+
+	public NetBankTransactionData(String transactionID, String userID, String transactionToName, String transactionAmount) {
+		this.transactionID = Long.parseLong(transactionID);
+		this.userID = Long.parseLong(userID);
+		this.transactionToName = transactionToName;
+		this.transactionAmount = Double.parseDouble(transactionAmount);
+	}
+	
+	public long getUserID() {
+		return userID;
 	}
 
 	public long getTransactionID() {
@@ -34,20 +47,21 @@ public class NetBankTransactionData implements Serializable{
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("ID : " + transactionID + "\n");
-		sb.append("To : " + transactionToName + "\n");
-		sb.append("Amount : " + transactionAmount + "\n\n");
+		sb.append(transactionID + "\n");
+		sb.append(userID + "\n");
+		sb.append(transactionToName + "\n");
+		sb.append(transactionAmount + ",");
 		return sb.toString();
 	}
 
 	public static class Database {
 		
-		public static NetBankTransactionData[] getDataStore() {
-			return NetBankUtils.queryTransaction();
+		public static NetBankTransactionData[] getDataStore(long accid) {
+			return NetBankUtils.queryTransaction(accid);
 		}
 		
-		public static NetBankTransactionData getDataStore(long id){
-			return NetBankUtils.queryTransaction(id);
+		public static NetBankTransactionData getDataStore(long accid, long id){
+			return NetBankUtils.queryTransaction(accid, id);
 		}
 		
 		public static boolean insertData(NetBankTransactionData data) {
