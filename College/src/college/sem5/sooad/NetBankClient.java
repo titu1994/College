@@ -118,9 +118,8 @@ public class NetBankClient {
 				}
 			}
 			else {
-				password = arr[0];
-				creditLimit = Double.parseDouble(arr[1]);
-				creditConsumed = Double.parseDouble(arr[2]);
+				creditLimit = Double.parseDouble(arr[0]);
+				creditConsumed = Double.parseDouble(arr[1]);
 			}
 			
 		}
