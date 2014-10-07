@@ -160,7 +160,7 @@ public class NetBankServer {
 				switch(choice) {
 				case 1: {
 					data = bb.readLine();
-					segs = data.split("[\r\n]+");
+					segs = data.split("[\\r\n]+");
 					NetBankTransactionData transaction = new NetBankTransactionData(Long.parseLong(segs[0]), 
 							segs[1]	, Double.parseDouble(segs[2]));
 					NetBankTransactionData.Database.insertData(transaction);

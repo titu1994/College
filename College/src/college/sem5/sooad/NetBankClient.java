@@ -181,6 +181,9 @@ public class NetBankClient {
 						if(oldPass != null && oldPass.length() != 0) {
 							pr.println(oldPass);
 						}
+						else if(oldPass.equals(newPass)){
+							System.out.println("New password matches old one");
+						}
 						else {
 							System.out.println("Enter old password correctly.");
 						}
