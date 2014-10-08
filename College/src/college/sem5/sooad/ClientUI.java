@@ -24,8 +24,7 @@ public class ClientUI extends JFrame {
 		ui = new ClientUI();
 		//ui.setSize(ui.getMaximumSize().width, ui.getMaximumSize().height);
 
-
-		ui.setSize(600, 400);
+		ui.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		ui.setVisible(true);
 	}
 
