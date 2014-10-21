@@ -51,23 +51,17 @@ public class NetBankUtils {
 
 	public static Connection connect() {
 		try {
-			if(conn == null || conn.isClosed()) {
-				try {
-					Class.forName("com.mysql.jdbc.Driver");
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				}
-				try {
-					conn = DriverManager.getConnection(HOST + DB_NAME, DB_USER, DB_PASS);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		try {
+			conn = DriverManager.getConnection(HOST + DB_NAME, DB_USER, DB_PASS);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		return conn;
 	}
 
@@ -92,15 +86,30 @@ public class NetBankUtils {
 
 	public static boolean insertData(NetBankTransactionData data) {
 		conn = connect();
-		try {
-			String sql = "insert into " + TABLE_TRANSACTIONS + " (" + COL_TRANID  + "," + COL_TRANUSERID + "," + COL_TRANTONAME + "," + COL_TRANSAMMOUNT + ") "+ " values(?,?,?,?)";
-			PreparedStatement stmt = conn.prepareStatement(sql);
-			stmt.setLong(1, data.getTransactionID());
-			stmt.setLong(2, data.getUserID());
-			stmt.setString(3, data.getTransactionToName());
-			stmt.setDouble(4, data.getTransactionAmount());
+		try {		
+			System.out.println("Insert Transaction Data");
+			NetBankAccountData acc = queryAccount(data.getUserID());
+			double max = acc.getCreditMaxLimit();
+			double amt = acc.getCreditConsumed();
 
-			stmt.executeUpdate();
+			if(max > (amt + data.getTransactionAmount())) {
+				System.out.println("Inserting Transaction Data");
+				String sql = "insert into " + TABLE_TRANSACTIONS + " (" + COL_TRANID  + "," + COL_TRANUSERID + "," + COL_TRANTONAME + "," + COL_TRANSAMMOUNT + ") "+ " values(?,?,?,?)";
+				PreparedStatement stmt = conn.prepareStatement(sql);
+				stmt.setLong(1, data.getTransactionID());
+				stmt.setLong(2, data.getUserID());
+				stmt.setString(3, data.getTransactionToName());
+				stmt.setDouble(4, data.getTransactionAmount());
+
+				stmt.executeUpdate();
+
+				acc.setCreditConsumed(acc.getCreditConsumed() + data.getTransactionAmount());
+				updateData(acc);
+			}
+			else {
+				System.out.println("Transaction Failed");
+				return false;
+			}
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -182,12 +191,15 @@ public class NetBankUtils {
 	public static NetBankAccountData queryAccount(long accountID) {
 		conn = connect();
 		try{
+			System.out.println("Utils : Testing conditions");
 			String sql = "select * from " + TABLE_ACCOUNT + " where " + COL_ACCID + " = ?";
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setLong(1, accountID);
 
 			ResultSet result = stmt.executeQuery();
+			System.out.println("Result set obtained:");
 			if(result.first()) {
+				System.out.println("Scribing first set of data");
 				String accPass = result.getString(COL_ACCSECUREPASSWORD);
 				double accMax = result.getDouble(COL_ACCCREDITMAX);
 				double accCon = result.getDouble(COL_ACCCREDITCONSUMED);

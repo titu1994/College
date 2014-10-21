@@ -1,84 +1,92 @@
 package college.sem5.sooad;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.WindowConstants;
+
+import college.sem5.sooad.NetBankClient.ClientListener;
 
 public class ClientUI extends JFrame {
 	private static final long serialVersionUID = 12321L;
-	private static ClientUI ui;
+	
+	private static LogIn login;
+	private static TransactionUI trans;
+	
+	private static long id;
+	private static String password;
 
 	private static NetBankServer server;
-	private static NetBankClient client;
+	public static NetBankClient client;
+	private static ClientEventListener listener;
 
 	public static void main(String[] args) {
+		listener = new ClientEventListener();
+		
 		server = new NetBankServer();
 		server.startCommunication();
-
-		ui = new ClientUI();
-		//ui.setSize(ui.getMaximumSize().width, ui.getMaximumSize().height);
-
-		ui.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-		ui.setVisible(true);
+	
+		login = new LogIn();
+		login.setVisible(true);
+	}
+	
+	public static void startClient(long id, String password) {
+		ClientUI.id = id; 
+		ClientUI.password = password;
+		
+		client = new NetBankClient(id, password, listener);
+		client.startCommunication();
+	}
+	
+	public static void TransactionScreen() {
+		login.setVisible(false);
+		trans = new TransactionUI();
+		trans.setVisible(true);
 	}
 
-	public ClientUI() {
-		initView();
-	}
-	private JLabel username, password;
-	private JTextField user;
-	private JPasswordField pass;
-	private JButton authenticate;
+	public static class ClientEventListener implements ClientListener {
 
-	private void initView() {
+		@Override
+		public void clientLogInFailed() {
+			login.logInFailed();
+		}
 
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		getContentPane().setLayout(null);
+		@Override
+		public void clientLogInSuccess(double limit, double consumed) {
+			TransactionScreen();
+		}
 
-		username = new JLabel();
-		password = new JLabel();
-		user = new JTextField();
-		pass = new JPasswordField();
-		authenticate = new JButton();
-
-		username.setText("Username");
-		username.setBounds(30, 0, 100, 100);
-		password.setText("Password");
-		password.setBounds(30, 30, 100, 100);
-
-		getContentPane().add(username);
-		getContentPane().add(password);
-
-		user.setBounds(150, 35, 100, 30);
-		pass.setBounds(150, 65, 100, 30);
-
-		getContentPane().add(user);
-		getContentPane().add(pass);
-
-		authenticate.setBounds(75, 100, 100, 40);
-		authenticate.setText("Submit");
-
-		authenticate.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				long id = Long.parseLong(user.getText().toString());
-				String p = new String(pass.getPassword());
-				client = new NetBankClient(id, p);
-				client.startCommunication();
-
+		@Override
+		public void clientTransactionAdded(boolean succesful) {
+			if(succesful) {
+				System.out.println("Wait");
 			}
-		});
+			else {
+				System.out.println("Trasaction failed to add");
+			}
+		}
 
-		getContentPane().add(authenticate);
+		@Override
+		public void clientAllTransactionData(NetBankTransactionData[] datas) {
+			trans.clientAllTransactionData(datas);
+		}
 
+		@Override
+		public void clientOldPasswordMatchesNewPassword() {
+			
+		}
+
+		@Override
+		public void clientOldPasswordNotEnteredCorrectly() {
+			
+		}
+
+		@Override
+		public void clientNewPasswordEmpty() {
+			
+		}
+
+		@Override
+		public void clientOldPasswordNotFound() {
+			
+		}
+		
 	}
-
 }

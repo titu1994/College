@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,9 +18,14 @@ import college.sem5.sooad.NetBankClient.NetBankClientProtocols;
 public class NetBankServer {
 	private static ExecutorService executor;
 	private ServerSocket server = null;
+	private static Socket client;
 	private String protocol;
 
 	private long id;
+
+	private static ServerListener listener;
+	private static PrintWriter pr;
+	private static BufferedReader bb;
 
 	public NetBankServer() {
 		if(!isExecutorAvailable())
@@ -33,6 +39,10 @@ public class NetBankServer {
 		}
 		System.out.println("Server : Started");
 
+	}
+	
+	public static void setServerListener(ServerListener listener) {
+		NetBankServer.listener = listener;
 	}
 
 	public void startCommunication() {
@@ -55,7 +65,6 @@ public class NetBankServer {
 
 	boolean clientWaiting = true;
 	private void serveClient() {
-		Socket client;
 		try {
 
 			System.out.println("Server : Accepting conections");
@@ -63,8 +72,8 @@ public class NetBankServer {
 
 			synchronized (client) {
 				System.out.println("Server : Accepted connection");
-				PrintWriter pr = new PrintWriter(new OutputStreamWriter(client.getOutputStream()), true);
-				BufferedReader bb = new BufferedReader(new InputStreamReader(client.getInputStream()));
+				pr = new PrintWriter(new OutputStreamWriter(client.getOutputStream()), true);
+				bb = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
 				StringBuilder sb = new StringBuilder();
 
@@ -78,26 +87,24 @@ public class NetBankServer {
 
 				//TODO: Parse sb here
 				System.out.println("Server : Parsing details");
-				NetBankAccountData data = parseClientUserPass(client, sb.toString());
+				NetBankAccountData data = parseClientUserPass(sb.toString());
 
 				System.out.println("Server : Ready to send information");
 				pr.println(NetBankServerProtocols.serverReadyToSend);
 
 				//TODO: Send data here
 				//Note : data may be null, meaning it doesn't exist in DB. Client must handle that
-				sendClientAllData(client, pr, data, bb);
+				sendClientAllData(data);
 
 				//Server ready to handle next instruction
-				System.out.println("Server : Ready to recieve additional requests");
-				pr.println(NetBankServerProtocols.serverReadyToReceive);
-
-				while(clientWaiting) {
+				
+				/*while(clientWaiting) {
 					handleServerChoice(client, pr, bb);
 				}
-				NetBankUtils.closeConnection();
-				pr.close();
-				bb.close();
-				client.close();
+				 */
+
+				handleServerChoice();
+				cancelConnection();
 			}
 
 		} catch (IOException e) {
@@ -106,7 +113,15 @@ public class NetBankServer {
 		}
 	}
 
-	private void sendClientAllData(Socket client, PrintWriter pr, NetBankAccountData data, BufferedReader bb) {
+	public static void cancelConnection()
+			throws IOException {
+		NetBankUtils.closeConnection();
+		pr.close();
+		bb.close();
+		client.close();
+	}
+
+	private void sendClientAllData(NetBankAccountData data) {
 		synchronized (client) {
 			//If Data exists
 			if(data != null) {
@@ -114,9 +129,9 @@ public class NetBankServer {
 				pr.println(data.getCreditMaxLimit()+ "," + data.getCreditConsumed());
 			}
 			else { //If Data does not exist
-				System.out.println("Server : Account data does not exist. Creating new account.");
+				System.out.println("Server : Account data does not exist.");
 				pr.println(NetBankServerProtocols.serverError + "," + NetBankServerProtocols.errorIdDoesNotExist);
-				
+
 				String protocol = "";
 				try {
 					if((protocol = bb.readLine()).equals(NetBankClientProtocols.clientAddAccount)) {
@@ -125,7 +140,10 @@ public class NetBankServer {
 						String pass = bb.readLine();
 						NetBankAccountData acc = new NetBankAccountData(id, pass);
 						NetBankAccountData.DataBase.insertData(acc);
+						listener.serverAccountAdded(acc);
 						System.out.println("Server : New account created.");
+					} else {
+						cancelConnection();
 					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -136,7 +154,7 @@ public class NetBankServer {
 		}
 	}
 
-	private NetBankAccountData parseClientUserPass(Socket client, String input) {
+	private NetBankAccountData parseClientUserPass(String input) {
 		synchronized (client) {
 			String arr[] = input.split("[\\r\n]+");
 
@@ -156,34 +174,35 @@ public class NetBankServer {
 		}
 	}
 
-	private void handleServerChoice(Socket client, PrintWriter pr, BufferedReader bb) throws IOException {
+	private void handleServerChoice() throws IOException {
 		synchronized (client) {
 			String data = null;
 			String segs[] = null;
 			do {
 				int choice = decodeProtocolAction(bb.readLine());
-
+				System.out.println("Server : Processing Action");
 				switch(choice) {
 				case 1: {
+					System.out.println("Server : Adding Transaction");
 					data = bb.readLine();
-					segs = data.split("[\\r\n]+");
+					System.out.println("Server : Transaction data string fetched");
+					segs = data.split(",");
+					System.out.println(Arrays.toString(segs));
 					NetBankTransactionData transaction = new NetBankTransactionData(Long.parseLong(segs[0]), Long.parseLong(segs[1]),
 							segs[2]	, Double.parseDouble(segs[2]));
-					NetBankTransactionData.Database.insertData(transaction);
+					boolean store = NetBankTransactionData.Database.insertData(transaction);
 
-					if((protocol = bb.readLine()).equals(NetBankServerProtocols.clientReadyToRecieve))
-						System.out.println("Transaction " + Long.parseLong(segs[0]) + " succesfull saved.");
+					listener.serverSendIsTransactionStored(store);
 					break;
 				}
 				case 2: {
+					System.out.println("Server : Gathering all data");
 					long accid = Long.parseLong(bb.readLine());
 					NetBankTransactionData datas[] = NetBankTransactionData.Database.getDataStore(accid);
 
+					System.out.println("Server : Query Complete");
 					//TODO: Send data to client to display
-					for(NetBankTransactionData d : datas) 
-						pr.println(d);
-
-					pr.println(NetBankServerProtocols.serverReadyToReceive);
+					listener.serverSendTransactionData(datas);
 					break;
 				}
 				case 3: {
@@ -200,7 +219,7 @@ public class NetBankServer {
 							DataBase.updateData(account);
 						}
 						else {
-							pr.println(NetBankServerProtocols.serverFinishCommunication);
+							pr.println(NetBankServerProtocols.serverError);
 						}
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -216,7 +235,7 @@ public class NetBankServer {
 
 				}
 
-			} while(!protocol.equals(NetBankServerProtocols.allClientsServed) || !protocol.equals(NetBankServerProtocols.clientFinishCommunication));
+			} while(clientWaiting);
 		}
 	}
 
@@ -249,6 +268,12 @@ public class NetBankServer {
 		String clientFinishCommunication = "ClientFinish";
 
 		String allClientsServed = "AllClientsServed";
+	}
+
+	public interface ServerListener {
+		void serverSendIsTransactionStored(boolean isStored);
+		void serverSendTransactionData(NetBankTransactionData datas[]);
+		void serverAccountAdded(NetBankAccountData acc);
 	}
 
 	public static boolean isExecutorAvailable() {
