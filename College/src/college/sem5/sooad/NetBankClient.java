@@ -156,7 +156,7 @@ public class NetBankClient implements ServerListener{
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void addTransaction(long id, String to, double amt) {
 		System.out.println("Client : Adding transaction");
 		StringBuilder sb = new StringBuilder();
@@ -172,27 +172,50 @@ public class NetBankClient implements ServerListener{
 		pr.println(NetBankClientProtocols.clientViewAllTransactions);
 		pr.println(accountID);
 	}
-	
+
 	public void alterPassword(String oldPass, String newPass) {
-		pr.print(NetBankClientProtocols.clientAlterCredentials);
+		pr.println(NetBankClientProtocols.clientAlterCredentials);
+
 		if(oldPass != null && oldPass.length() != 0) {
 			pr.println(oldPass);
 		}
 		else if(oldPass.equals(newPass)){
+			//Error Handling Measures
+			pr.println("");
+			try {
+				bb.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 			listener.clientOldPasswordMatchesNewPassword();
+			return;
 		}
-		else {
+		else {	
+			//Error Handling Measures
+			pr.println("");
+			try {
+				bb.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 			listener.clientOldPasswordNotEnteredCorrectly();
+			return;
 		}
 
 
 		try {
 			if((protocol = bb.readLine()).equals(NetBankServerProtocols.serverReadyToReceive)) {
-				if(newPass != null && newPass.length() != 0)
+				if(newPass != null && newPass.length() != 0) {
 					pr.println(newPass);
+					listener.clientPasswordChanged();
+				}
 				else {
-					listener.clientNewPasswordEmpty();
 					pr.println(oldPass);
+					listener.clientNewPasswordEmpty();
 				}
 			}
 			else {
@@ -204,7 +227,7 @@ public class NetBankClient implements ServerListener{
 		}
 	}
 
-	
+
 	public interface NetBankClientProtocols {
 		String clientAddAccount = "clientAddAccount";
 		String clientCloseConnection = "clientCloseConnection";
@@ -226,6 +249,7 @@ public class NetBankClient implements ServerListener{
 		void clientOldPasswordNotEnteredCorrectly();
 		void clientNewPasswordEmpty();
 		void clientOldPasswordNotFound();
+		void clientPasswordChanged();
 	}
 
 
@@ -266,6 +290,11 @@ public class NetBankClient implements ServerListener{
 	@Override
 	public void serverAccountAdded(NetBankAccountData acc) {
 		listener.clientLogInSuccess(acc.getCreditMaxLimit(), acc.getCreditConsumed());
+	}
+
+	@Override
+	public void serverPasswordChanged() {
+		listener.clientPasswordChanged();
 	}
 
 }

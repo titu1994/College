@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
@@ -20,9 +22,10 @@ public class TransactionUI extends JFrame {
 	private TransactionDataModel tmodel;
 	
 	private JTable table;
-	private JButton transAddButton, viewTransButton, alterAccPassButton, submitAdd;
+	private JButton transAddButton, viewTransButton, alterAccPassButton, submitAdd, accountEdit;
 	private JTextField transIDText,  transToText, transAmtText;
-	private JLabel transIDLabel, transToLabel, transAmtLabel;
+	private JPasswordField accountOldText, accountNewText, accountNewCheckText;
+	private JLabel transIDLabel, transToLabel, transAmtLabel, accountOldLabel, accountNewLabel, accountNewCheckLabel;
 
 	public TransactionUI() {
 		setExtendedState(JFrame.MAXIMIZED_BOTH); 
@@ -39,6 +42,7 @@ public class TransactionUI extends JFrame {
 		viewTransButton = new JButton();
 		alterAccPassButton = new JButton();
 		submitAdd = new JButton();
+		
 		transIDText = new JTextField();	
 		transToText = new JTextField();
 		transAmtText = new JTextField();
@@ -46,8 +50,16 @@ public class TransactionUI extends JFrame {
 		transToLabel = new JLabel();
 		transAmtLabel = new JLabel();
 		
+		accountEdit = new JButton();
+		accountOldLabel = new JLabel();
+		accountNewLabel = new JLabel();
+		accountNewCheckLabel = new JLabel();
+		accountOldText = new JPasswordField();
+		accountNewText = new JPasswordField();
+		accountNewCheckText = new JPasswordField();
+		
 		transAddButton.setText("Add Transaction");
-		transAddButton.setBounds(100, 0, 100, 50);
+		transAddButton.setBounds(100, 0, 200, 50);
 		transAddButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -58,7 +70,7 @@ public class TransactionUI extends JFrame {
 		getContentPane().add(transAddButton);
 		
 		viewTransButton.setText("View all Transactions");
-		viewTransButton.setBounds(250, 0, 100, 50);
+		viewTransButton.setBounds(350, 0, 200, 50);
 		viewTransButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -69,7 +81,7 @@ public class TransactionUI extends JFrame {
 		getContentPane().add(viewTransButton);
 		
 		alterAccPassButton.setText("Alter Account Password");
-		alterAccPassButton.setBounds(400, 0, 100, 50);
+		alterAccPassButton.setBounds(600, 0, 200, 50);
 		alterAccPassButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -80,12 +92,35 @@ public class TransactionUI extends JFrame {
 		getContentPane().add(alterAccPassButton);
 		
 		submitAdd.setText("Submit");
-		submitAdd.setBounds(200, 300, 100, 50);
+		submitAdd.setBounds(200, 300, 200, 50);
 		submitAdd.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				ClientUI.waitDialog.setVisible(true);
 				ClientUI.client.addTransaction(Long.parseLong(transIDText.getText()), transToText.getText(), Double.parseDouble(transAmtText.getText()));
+				transIDText.setText("");
+				transToText.setText("");
+				transAmtText.setText("");
+			}
+		});
+		
+		accountEdit.setText("Change Password");
+		accountEdit.setBounds(200,400,200,50);
+		accountEdit.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String old = new String(accountOldText.getPassword());
+				String new1 = new String(accountNewText.getPassword());
+				String new2 = new String(accountNewCheckText.getPassword());
+				if(new1.equals(new2)) {
+					ClientUI.waitDialog.setVisible(true);
+					ClientUI.client.alterPassword(old, new1);
+					accountOldText.setText("");
+					accountNewText.setText("");
+					accountNewCheckText.setText("");
+				}
 			}
 		});
 		
@@ -100,16 +135,46 @@ public class TransactionUI extends JFrame {
 		transToText.setBounds(125, 200, 100, 50);
 		transAmtText.setBounds(250, 200, 100, 50);
 		
+		accountOldLabel.setBounds(100, 100, 200, 50);
+		accountOldLabel.setText("Enter Old Password");
+		accountNewLabel.setBounds(100, 200, 200, 50);
+		accountNewLabel.setText("Enter New Password");
+		accountNewCheckLabel.setBounds(100, 300, 200, 50);
+		accountNewCheckLabel.setText("Re-enter New Password");
+		
+		accountOldText.setBounds(350, 100, 100, 50);
+		accountNewText.setBounds(350, 200, 100, 50);
+		accountNewCheckText.setBounds(350, 300, 100, 50);
+		
 	}
 
+	boolean accountFirst = false;
 	protected void alterAccountPasswordHandler() {
 		clearScreen();
+		if(!accountFirst) {
+			getContentPane().add(accountEdit);
+			getContentPane().add(accountOldLabel);
+			getContentPane().add(accountNewLabel);
+			getContentPane().add(accountNewCheckLabel);
+			getContentPane().add(accountOldText);
+			getContentPane().add(accountNewText);
+			getContentPane().add(accountNewCheckText);
+			accountFirst = true;
+		}
 		
+		accountEdit.setVisible(true);
+		accountOldLabel.setVisible(true);
+		accountNewLabel.setVisible(true);
+		accountNewCheckLabel.setVisible(true);
+		accountOldText.setVisible(true);
+		accountNewText.setVisible(true);
+		accountNewCheckText.setVisible(true);
 		
 	}
 
 	protected void viewAllTransactionsHandler() {
 		clearScreen();
+		ClientUI.waitDialog.setVisible(true);
 		tableSetup();
 		ClientUI.client.viewAllTransactions();
 	}
@@ -119,16 +184,16 @@ public class TransactionUI extends JFrame {
 		clearScreen();
 		System.out.println("Entered Transaction Handler");
 		if(!first) {
+			getContentPane().add(submitAdd);
 			getContentPane().add(transIDLabel);
 			getContentPane().add(transToLabel);
 			getContentPane().add(transAmtLabel);
 			getContentPane().add(transIDText);
 			getContentPane().add(transToText);
 			getContentPane().add(transAmtText);
-			getContentPane().add(submitAdd);
 			first = true;
 		}
-		
+		submitAdd.setVisible(true);
 		transIDText.setVisible(true);
 		transToText.setVisible(true);
 		transAmtText.setVisible(true);
@@ -136,6 +201,7 @@ public class TransactionUI extends JFrame {
 		transIDLabel.setVisible(true);
 		transToLabel.setVisible(true);
 		transAmtLabel.setVisible(true);
+		
 	}
 	
 	public void clearScreen() {
@@ -148,6 +214,16 @@ public class TransactionUI extends JFrame {
 		transIDLabel.setVisible(false);
 		transToLabel.setVisible(false);
 		transAmtLabel.setVisible(false);
+		
+		submitAdd.setVisible(false);
+		
+		accountEdit.setVisible(false);
+		accountOldLabel.setVisible(false);
+		accountNewLabel.setVisible(false);
+		accountNewCheckLabel.setVisible(false);
+		accountOldText.setVisible(false);
+		accountNewText.setVisible(false);
+		accountNewCheckText.setVisible(false);
 	}
 
 	private void tableSetup() {		
@@ -169,10 +245,17 @@ public class TransactionUI extends JFrame {
 			tmodel.fireTableDataChanged();
 		}
 		table.setVisible(true);
+		ClientUI.waitDialog.setVisible(false);
 	}
 	
 	public void clientTransactionAdded(boolean succesful) {
-		
+		ClientUI.waitDialog.setVisible(false);
+		if(succesful) {
+			System.out.println("Added Transaction");
+		}
+		else {
+			System.out.println("Trasaction failed to add");
+		}
 	}
 
 	public void clientAllTransactionData(NetBankTransactionData[] datas) {
@@ -197,20 +280,28 @@ public class TransactionUI extends JFrame {
 	}
 
 	public void clientOldPasswordMatchesNewPassword() {
-		
+		ClientUI.waitDialog.setVisible(false);
+		JOptionPane.showMessageDialog(this, "Old Password Matches New Password");
 	}
 
 	public void clientOldPasswordNotEnteredCorrectly() {
-		
+		ClientUI.waitDialog.setVisible(false);
+		JOptionPane.showMessageDialog(this, "Old Password entered was wrong.");
 	}
 	
-	
 	public void clientNewPasswordEmpty() {
-		
+		ClientUI.waitDialog.setVisible(false);
+		JOptionPane.showMessageDialog(this, "New Password is empty");
 	}
 
 	public void clientOldPasswordNotFound() {
-		
+		ClientUI.waitDialog.setVisible(false);
+		JOptionPane.showMessageDialog(this, "Old Password not found in database.");
+	}
+	
+	public void clientPasswordChanged() {
+		ClientUI.waitDialog.setVisible(false);
+		JOptionPane.showMessageDialog(this, "Password was succesfully changed.");
 	}
 	
 	private class DisplayTransaction {

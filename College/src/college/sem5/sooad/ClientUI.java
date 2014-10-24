@@ -1,6 +1,9 @@
 package college.sem5.sooad;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import college.sem5.sooad.NetBankClient.ClientListener;
 
@@ -16,12 +19,18 @@ public class ClientUI extends JFrame {
 	private static NetBankServer server;
 	public static NetBankClient client;
 	private static ClientEventListener listener;
+	
+	public static JDialog waitDialog = new JDialog();
 
 	public static void main(String[] args) {
 		listener = new ClientEventListener();
 		
 		server = new NetBankServer();
-		server.startCommunication();
+		JLabel label = new JLabel("Please wait...");
+		waitDialog.setLocationRelativeTo(null);
+		waitDialog.setTitle("Please Wait...");
+		waitDialog.add(label);
+		waitDialog.pack();
 	
 		login = new LogIn();
 		login.setVisible(true);
@@ -31,6 +40,9 @@ public class ClientUI extends JFrame {
 		ClientUI.id = id; 
 		ClientUI.password = password;
 		
+		waitDialog.setVisible(true);
+		
+		server.startCommunication();
 		client = new NetBankClient(id, password, listener);
 		client.startCommunication();
 	}
@@ -45,22 +57,19 @@ public class ClientUI extends JFrame {
 
 		@Override
 		public void clientLogInFailed() {
+			waitDialog.setVisible(false);
 			login.logInFailed();
 		}
 
 		@Override
 		public void clientLogInSuccess(double limit, double consumed) {
+			waitDialog.setVisible(false);
 			TransactionScreen();
 		}
 
 		@Override
 		public void clientTransactionAdded(boolean succesful) {
-			if(succesful) {
-				System.out.println("Wait");
-			}
-			else {
-				System.out.println("Trasaction failed to add");
-			}
+			
 		}
 
 		@Override
@@ -70,22 +79,27 @@ public class ClientUI extends JFrame {
 
 		@Override
 		public void clientOldPasswordMatchesNewPassword() {
-			
+			trans.clientOldPasswordMatchesNewPassword();
 		}
 
 		@Override
 		public void clientOldPasswordNotEnteredCorrectly() {
-			
+			trans.clientOldPasswordNotEnteredCorrectly();
 		}
 
 		@Override
 		public void clientNewPasswordEmpty() {
-			
+			trans.clientNewPasswordEmpty();
 		}
 
 		@Override
 		public void clientOldPasswordNotFound() {
-			
+			trans.clientOldPasswordNotFound();
+		}
+
+		@Override
+		public void clientPasswordChanged() {
+			trans.clientPasswordChanged();
 		}
 		
 	}

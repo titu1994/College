@@ -26,6 +26,7 @@ public class NetBankServer {
 	private static ServerListener listener;
 	private static PrintWriter pr;
 	private static BufferedReader bb;
+	private NetBankAccountData acc;
 
 	public NetBankServer() {
 		if(!isExecutorAvailable())
@@ -87,21 +88,14 @@ public class NetBankServer {
 
 				//TODO: Parse sb here
 				System.out.println("Server : Parsing details");
-				NetBankAccountData data = parseClientUserPass(sb.toString());
+				acc = parseClientUserPass(sb.toString());
 
 				System.out.println("Server : Ready to send information");
 				pr.println(NetBankServerProtocols.serverReadyToSend);
 
 				//TODO: Send data here
 				//Note : data may be null, meaning it doesn't exist in DB. Client must handle that
-				sendClientAllData(data);
-
-				//Server ready to handle next instruction
-				
-				/*while(clientWaiting) {
-					handleServerChoice(client, pr, bb);
-				}
-				 */
+				sendClientAllData(acc);
 
 				handleServerChoice();
 				cancelConnection();
@@ -138,7 +132,7 @@ public class NetBankServer {
 						System.out.println("Server : Accepting id and password for new account.");
 						long id = Long.parseLong(bb.readLine());
 						String pass = bb.readLine();
-						NetBankAccountData acc = new NetBankAccountData(id, pass);
+						acc = new NetBankAccountData(id, pass);
 						NetBankAccountData.DataBase.insertData(acc);
 						listener.serverAccountAdded(acc);
 						System.out.println("Server : New account created.");
@@ -189,7 +183,8 @@ public class NetBankServer {
 					segs = data.split(",");
 					System.out.println(Arrays.toString(segs));
 					NetBankTransactionData transaction = new NetBankTransactionData(Long.parseLong(segs[0]), Long.parseLong(segs[1]),
-							segs[2]	, Double.parseDouble(segs[2]));
+							segs[2]	, Double.parseDouble(segs[3]));
+					System.out.println("segs : Inserting Data");
 					boolean store = NetBankTransactionData.Database.insertData(transaction);
 
 					listener.serverSendIsTransactionStored(store);
@@ -207,16 +202,16 @@ public class NetBankServer {
 				}
 				case 3: {
 					String oldPass = bb.readLine();
+					System.out.println("Server : Old Pass  " + oldPass);
 					String generatedPassword = NetBankUtils.getSecurePassword(oldPass);
-					NetBankAccountData account = null; 
 					try {
-						account = DataBase.getDataStore(id);
-						if(account.getSecurePassword().equals(generatedPassword)) {
+						if(acc.getSecurePassword().equals(generatedPassword)) {
 							pr.println(NetBankServerProtocols.serverReadyToReceive);
 							String newPass = bb.readLine();
 
-							account.setSecurePassword(NetBankUtils.getSecurePassword(newPass));
-							DataBase.updateData(account);
+							acc.setSecurePassword(NetBankUtils.getSecurePassword(newPass));
+							DataBase.updateData(acc);
+							
 						}
 						else {
 							pr.println(NetBankServerProtocols.serverError);
@@ -240,6 +235,7 @@ public class NetBankServer {
 	}
 
 	private int decodeProtocolAction(String protocol) {
+		System.out.println("Server : Protocol - " + protocol);
 		if(protocol.equals(NetBankClientProtocols.clientAddTransaction))
 			return 1;
 		else if(protocol.equals(NetBankClientProtocols.clientViewAllTransactions))
@@ -274,6 +270,7 @@ public class NetBankServer {
 		void serverSendIsTransactionStored(boolean isStored);
 		void serverSendTransactionData(NetBankTransactionData datas[]);
 		void serverAccountAdded(NetBankAccountData acc);
+		void serverPasswordChanged();
 	}
 
 	public static boolean isExecutorAvailable() {

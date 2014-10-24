@@ -1,5 +1,7 @@
 package college.sem5.sooad;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,13 +12,21 @@ import java.util.ArrayList;
 
 public class NetBankUtils {
 
-	public static final String HOST = "jdbc:mysql://sql3.freemysqlhosting.net/";
+	/*public static final String HOST = "jdbc:mysql://sql3.freemysqlhosting.net/";
 	public static final String DB_NAME = "sql353714";
 	public static final String DB_USER = "sql353714";
 	public static final String DB_PASS = "vW3!xL9*";
 
 	private static final String TABLE_ACCOUNT =  "AccountDB";
-	private static final String TABLE_TRANSACTIONS = "TransactionDB";
+	private static final String TABLE_TRANSACTIONS = "TransactionDB";*/
+	
+	public static final String HOST = "jdbc:mysql://localhost/";
+	public static final String DB_NAME = "sooad";
+	public static final String DB_USER = "root";
+	public static final String DB_PASS = "";
+
+	private static final String TABLE_ACCOUNT =  "accountdb";
+	private static final String TABLE_TRANSACTIONS = "transactiondb";
 	public static final int PORT = 3306;
 
 	private static final String COL_ACCID = "accountID";
@@ -46,6 +56,7 @@ public class NetBankUtils {
 		catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}*/
+		
 		return insecurePassword;
 	}
 
@@ -56,7 +67,14 @@ public class NetBankUtils {
 			e.printStackTrace();
 		}
 		try {
-			conn = DriverManager.getConnection(HOST + DB_NAME, DB_USER, DB_PASS);
+			if(conn == null || conn.isClosed()) {
+				conn = DriverManager.getConnection(HOST + DB_NAME, DB_USER, DB_PASS);
+			}
+				
+			else {
+				return conn;
+			}
+				
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -86,14 +104,12 @@ public class NetBankUtils {
 
 	public static boolean insertData(NetBankTransactionData data) {
 		conn = connect();
-		try {		
-			System.out.println("Insert Transaction Data");
+		try {	
 			NetBankAccountData acc = queryAccount(data.getUserID());
 			double max = acc.getCreditMaxLimit();
 			double amt = acc.getCreditConsumed();
 
 			if(max > (amt + data.getTransactionAmount())) {
-				System.out.println("Inserting Transaction Data");
 				String sql = "insert into " + TABLE_TRANSACTIONS + " (" + COL_TRANID  + "," + COL_TRANUSERID + "," + COL_TRANTONAME + "," + COL_TRANSAMMOUNT + ") "+ " values(?,?,?,?)";
 				PreparedStatement stmt = conn.prepareStatement(sql);
 				stmt.setLong(1, data.getTransactionID());
@@ -107,7 +123,6 @@ public class NetBankUtils {
 				updateData(acc);
 			}
 			else {
-				System.out.println("Transaction Failed");
 				return false;
 			}
 			return true;
@@ -191,15 +206,14 @@ public class NetBankUtils {
 	public static NetBankAccountData queryAccount(long accountID) {
 		conn = connect();
 		try{
-			System.out.println("Utils : Testing conditions");
-			String sql = "select * from " + TABLE_ACCOUNT + " where " + COL_ACCID + " = ?";
+			String sql = "select * from " + TABLE_ACCOUNT + " where " + COL_ACCID + " = ? order by " + COL_ACCID + " asc";
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setLong(1, accountID);
 
 			ResultSet result = stmt.executeQuery();
-			System.out.println("Result set obtained:");
+			System.out.println("Utils : Account Results obtained");
 			if(result.first()) {
-				System.out.println("Scribing first set of data");
+				System.out.println("Utils : Account found. Retrieving first one");
 				String accPass = result.getString(COL_ACCSECUREPASSWORD);
 				double accMax = result.getDouble(COL_ACCCREDITMAX);
 				double accCon = result.getDouble(COL_ACCCREDITCONSUMED);
@@ -219,7 +233,7 @@ public class NetBankUtils {
 	public static NetBankAccountData[] queryAccount() {
 		conn = connect();
 		try{
-			String sql = "select * from " + TABLE_ACCOUNT;
+			String sql = "select * from " + TABLE_ACCOUNT + " order by " + COL_TRANID + " asc";
 			PreparedStatement stmt = conn.prepareStatement(sql);
 
 			ResultSet result = stmt.executeQuery();
@@ -252,7 +266,7 @@ public class NetBankUtils {
 	public static NetBankTransactionData queryTransaction(long accountID, long transactionID) {
 		conn = connect();
 		try{
-			String sql = "select * from " + TABLE_TRANSACTIONS + " where " + COL_TRANID + " = ? and " + COL_TRANUSERID + " = ?";
+			String sql = "select * from " + TABLE_TRANSACTIONS + " where " + COL_TRANID + " = ? and " + COL_TRANUSERID + " = ?" + " order by " + COL_TRANID;
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setLong(1, transactionID);
 			stmt.setLong(2, accountID);
@@ -274,7 +288,7 @@ public class NetBankUtils {
 	public static NetBankTransactionData[] queryTransaction(long accountID) {
 		conn = connect();
 		try{
-			String sql = "select * from " + TABLE_TRANSACTIONS + " where " + COL_TRANUSERID + " = ?";
+			String sql = "select * from " + TABLE_TRANSACTIONS + " where " + COL_TRANUSERID + " = ?" + " order by " + COL_TRANID;
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setLong(1, accountID);
 
