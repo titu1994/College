@@ -49,9 +49,7 @@ public class ServerClientClass {
 				synchronized(client) {
 
 					System.out.println("Server: Accepted a client.");
-					PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(client.getOutputStream())), 
-
-							true);
+					PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(client.getOutputStream())), true);
 					BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
 					System.out.println("Server : Accepting input to process.");

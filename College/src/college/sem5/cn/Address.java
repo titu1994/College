@@ -41,7 +41,6 @@ public class Address {
 	}
 
 	private static void printMACAddress() {
-
 		try {
 			Enumeration<NetworkInterface> networks = NetworkInterface.getNetworkInterfaces();
 			int count = 0;
@@ -60,17 +59,12 @@ public class Address {
 						sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
 					}
 					System.out.println(sb.toString());
-					if(++count == 2) {
-						break;
-					}
-
-
+					break;
 				}
 			}
 		} catch (SocketException e){
 			e.printStackTrace();
 		}	
-
 	}
 
 	private static void printSubnetMask() throws IOException{
