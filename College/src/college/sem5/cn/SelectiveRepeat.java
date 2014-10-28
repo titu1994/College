@@ -134,7 +134,8 @@ public class SelectiveRepeat {
 							else {
 								buffer.setCharAt(i, '0');
 							}
-
+							System.out.println("Buffer : " + buffer.substring(0,i+1));
+							
 							out.println(i);
 							buffer.setCharAt(i, in.readLine().charAt(0));
 							System.out.println("Error corrected at i = " +i);

@@ -78,13 +78,13 @@ public class HammingCode {
 		else
 			a[8] = 1;
 
-		System.out.println("The Correct Message is ");
+		System.out.println("The Encoded Message is ");
 
 		for (i = 11; i >= 1; i--)
 			System.out.print(a[i]);
 		System.out.println();
 
-		System.out.println("Enter the decoded message");
+		System.out.println("Enter the 11 bit message to decode:");
 		for (i = 11; i >= 1; i--)
 			r[i] = read.nextInt();
 
@@ -154,13 +154,12 @@ public class HammingCode {
 
 		value = v[0] + v[1] * 2 + v[2] * 4 + v[3] * 8;
 
-		System.out.println("Error detected at " + value + "th pos");
 		if (r[value] == 0)
 			r[value] = 1;
 		else
 			r[value] = 0;
 
-		System.out.println("The Correct Message is ");
+		System.out.println("The Decoded Message is ");
 		for (i = 11; i >= 1; i--)
 			System.out.print(r[i]);
 	}
