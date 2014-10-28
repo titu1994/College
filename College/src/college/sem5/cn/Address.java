@@ -91,19 +91,26 @@ public class Address {
 			count = 5;
 
 		StringBuilder sb = new StringBuilder();	
+		
+		for(int i = 0; i < count; i++) {
+			sb.append("255.");
+		}
 
-		if(classVal != 4 || classVal != 5) {
-
-			for(int i = 0; i < count; i++) {
-				sb.append("255.");
-			}
-
+		if(count < 4) {
 			for(int i = 0; i < 4 - count; i++) {
 				sb.append("0.");
 			}
-			String s = sb.substring(0,sb.length()-1).toString();
-			System.out.println("Subnet Mask is : " + s);
 		}
+		else {
+			if(count == 4) 
+				sb.append("224.");
+			
+			else if(count == 5)
+				sb.append("240.");
+		}
+		
+		String s = sb.substring(0,sb.length()-1).toString();
+		System.out.println("Subnet Mask is : " + s);
 	}
 
 }
