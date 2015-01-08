@@ -102,6 +102,8 @@ class LRUReplacement  {
 	}
 
 	public static class LRUCache <K, V> extends LinkedHashMap < K, V > {
+		
+		private static final long serialVersionUID = 4764830195495351779L;
 		private int capacity;
 
 		public LRUCache(int capacity) { 
@@ -159,7 +161,6 @@ class OptimalReplacement  {
 
 	public static int getPos(int currPos){
 		int indices[] = new int[pageSize];
-
 
 		if(currPos > pageSize) {
 			for(int i = 0; i < pageSize; i++) {

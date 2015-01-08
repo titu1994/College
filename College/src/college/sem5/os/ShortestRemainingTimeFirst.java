@@ -7,7 +7,7 @@ public class ShortestRemainingTimeFirst {
 	public static void main(String args[]) {
 		int table1[][] = new int[5][6];
 		int table2[][] = new int[5][6];
-		int total = 0;
+		int totalTime = 0;
 		boolean con[] = new boolean[5];
 		boolean fin[] = new boolean[5];
 		boolean lowest[] = new boolean[5];
@@ -25,15 +25,15 @@ public class ShortestRemainingTimeFirst {
 			}
 			table1[a][0] = (a + 1);
 			table2[a][0] = table1[a][0];
-			total += table1[a][2];
+			totalTime += table1[a][2];
 			con[a] = false;
 			fin[a] = false;
 			lowest[a] = false;
 		}
-		String str[] = new String[total];
-		for (int c = 0; c < total; c++) {
+		String str[] = new String[totalTime];
+		for (int time = 0; time < totalTime; time++) {
 			for (int d = 0; d < 5; d++) {
-				if (table1[d][1] <= c && !fin[d]) {
+				if (table1[d][1] <= time && !fin[d]) {
 					con[d] = true;
 				}
 			}
@@ -60,19 +60,19 @@ public class ShortestRemainingTimeFirst {
 					table1[f][2] -= 1;
 					if (table1[f][2] == 0) {
 						fin[f] = true;
-						str[c] = "" + (f + 1);
+						str[time] = "" + (f + 1);
 						break;
 					}
 				}
 			}
-			if (str[c] == null)
-				str[c] = "0";
+			if (str[time] == null)
+				str[time] = "0";
 			for (int p = 0; p < 5; p++) {
 				lowest[p] = false;
 				con[p] = false;
 			}
 		}
-		for (int n = 0; n < total; n++) {
+		for (int n = 0; n < totalTime; n++) {
 			if (str[n] != "0") {
 				table2[Integer.parseInt(str[n]) - 1][5] = n + 1;
 			}

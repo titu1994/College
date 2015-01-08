@@ -1,5 +1,6 @@
 package college.sem5.os;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
@@ -153,17 +154,21 @@ class LinkedAllocation extends Allocation {
 	public void allocate() {
 		int tempLength, tempStart, end;
 		Random r = new Random();
-		int pos = -1, previous;
+		int pos = -1, previous = -1;
 
 		for(int i = 0; i < fat.size; i++) {
 			tempStart = fat.startBlock[i];
 			tempLength = fat.length[i];
 			end = tempLength + tempStart;
-			previous = tempStart;
+			memory[tempStart] = r.nextInt((end - tempStart) + 1) + tempStart;
+			previous = memory[tempStart];
+			ArrayList<Integer> ids = new ArrayList<Integer>();
+			ids.add(previous);
 
-			for(int j = 0; j < tempLength; j++) {
+			for(int j = 1; j < tempLength; j++) {
 				pos = r.nextInt((end - tempStart) + 1) + tempStart;
-				if(memory[pos] == -1) {
+				if(memory[pos] == -1 && !ids.contains(pos)) {
+					ids.add(pos);
 					memory[pos] = previous;
 					previous = pos;
 				}

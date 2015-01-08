@@ -51,7 +51,7 @@ public class BankersAlgorithm {
 			avail[i] = sc.nextInt();
 		}
 
-		safety(sc, n, m, alloc, max, need, avail);
+		safety(sc, n, m, alloc, need, avail);
 		
 		System.out.println("Resouce Request Algotihm : ");
 		System.out.println("Enter the Request Process and values");
@@ -60,12 +60,12 @@ public class BankersAlgorithm {
 		int request[] = new int[m];
 		
 		resourceRequest(sc, m, alloc, need, avail, r, request);
-		safety(sc, n, m, alloc, max, need, avail);
+		safety(sc, n, m, alloc, need, avail);
 
 	}
 
 	private static void resourceRequest(Scanner sc, int m, int[][] alloc, int[][] need, int[] avail, int r, int[] request) {
-		System.out.println("Enter the Allocated Matrix elements");
+		System.out.println("Enter the Request Matrix elements");
 		for(int i = 0; i < m; i++) {
 			request[i] = sc.nextInt();
 			
@@ -88,7 +88,7 @@ public class BankersAlgorithm {
 		}
 	}
 
-	private static void safety(Scanner sc, int n, int m, int[][] alloc,	int[][] max, int[][] need, int[] avail) {
+	private static void safety(Scanner sc, int n, int m, int[][] alloc, int[][] need, int[] avail) {
 		int work[] = new int[m];
 		System.arraycopy(avail, 0, work, 0, m);
 

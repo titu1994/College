@@ -12,7 +12,7 @@ public class DijekstrasAlgorighm {
 			dist[i]=cost[v][i];
 		i=2;
 		while(i<=n) {
-			min=999;
+			min=INFINITY;
 			for(j=1;j<=n;j++)
 				if(dist[j]<min && !visited[j]){
 					min=dist[j];

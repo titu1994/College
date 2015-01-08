@@ -81,7 +81,7 @@ class Producer {
 				calculate = (i % bufferSize) + 1;
 				queue.put(calculate);
 				System.out.println("Producer: Produced an item : " + calculate);
-				if(queue.size() == 5)
+				if(queue.size() == Producer.bufferSize)
 					System.out.println("Buffer is full");
 			} catch (InterruptedException e) {
 				e.printStackTrace();

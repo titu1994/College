@@ -5,7 +5,7 @@ import java.io.*;
 public class SchedulingRR {
 	public static void main(String args[]) throws IOException {
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		int i, j, k, q, sum = 0;
+		int i, j, k, timeQuantum, sum = 0;
 		System.out.println("Enter number of process:");
 		int n = Integer.parseInt(in.readLine());
 		int bt[] = new int[n];
@@ -18,18 +18,18 @@ public class SchedulingRR {
 			bt[i] = Integer.parseInt(in.readLine());
 		}
 		System.out.println("Enter Time slice:");
-		q = Integer.parseInt(in.readLine());
+		timeQuantum = Integer.parseInt(in.readLine());
 		for (i = 0; i < n; i++)
 			a[i] = bt[i];
 		for (i = 0; i < n; i++)
 			wt[i] = 0;
 		do {
 			for (i = 0; i < n; i++) {
-				if (bt[i] > q) {
-					bt[i] -= q;
+				if (bt[i] > timeQuantum) {
+					bt[i] -= timeQuantum;
 					for (j = 0; j < n; j++) {
 						if ((j != i) && (bt[j] != 0))
-							wt[j] += q;
+							wt[j] += timeQuantum;
 					}
 				} else {
 					for (j = 0; j < n; j++) {
