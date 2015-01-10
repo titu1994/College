@@ -1,4 +1,4 @@
-package college.sem6.spacc.compiler;
+package college.sem6.spacc.compiler.lexer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
