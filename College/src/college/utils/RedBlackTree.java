@@ -1,41 +1,31 @@
 package college.utils;
 
-public class RedBlackTree {
+import college.utils.RedBlackTree.Datum;
 
-	public static class RedBlackNode {
-		protected RedBlackNode left, right;
-		int data;
-		int color;
+public class RedBlackTree<Data extends Datum> {
 
-		public RedBlackNode(int thedata) {
-			this(thedata, null, null);
-		}
+	private RedBlackNode<Data> current;
+	private RedBlackNode<Data> parent;
+	private RedBlackNode<Data> grand;
+	private RedBlackNode<Data> great;
+	private RedBlackNode<Data> header;
+	private RedBlackNode<Data> nullNode;
 
-		public RedBlackNode(int thedata, RedBlackNode lt, RedBlackNode rt) {
-			left = lt;
-			right = rt;
-			data = thedata;
-			color = 1;
-		}
-	}
-
-	private RedBlackNode current;
-	private RedBlackNode parent;
-	private RedBlackNode grand;
-	private RedBlackNode great;
-	private RedBlackNode header;
-	private static RedBlackNode nullNode;
-	static {
-		nullNode = new RedBlackNode(0);
-		nullNode.left = nullNode;
-		nullNode.right = nullNode;
-	}
 	/* Black - 1 RED - 0 */
-	static final int BLACK = 1;
-	static final int RED = 0;
+	public static final int BLACK = 1;
+	public static final int RED = 0;
+	private static final int NULLVALUE = 0;
+	private static final int HEADERVALUE = Integer.MIN_VALUE;
 
 	public RedBlackTree() {
-		header = new RedBlackNode(Integer.MIN_VALUE);
+		Datum nullv = new Datum(NULLVALUE);
+		Datum headerv = new Datum(HEADERVALUE);
+		
+		nullNode = new RedBlackNode(nullv);
+		nullNode.left = nullNode;
+		nullNode.right = nullNode;
+		
+		header = new RedBlackNode(headerv);
 		header.left = nullNode;
 		header.right = nullNode;
 	}
@@ -51,31 +41,33 @@ public class RedBlackTree {
 	}
 
 	/* Function to insert item */
-	public void insert(int item) {
+	public void insert(Data item) {
 		current = parent = grand = header;
 		nullNode.data = item;
 		while (current.data != item) {
 			great = grand;
 			grand = parent;
 			parent = current;
-			current = item < current.data ? current.left : current.right;
+			current = item.compareTo(current.data) < 0 ? current.left : current.right;
 			// Check if two red children and fix if so
 			if (current.left.color == RED && current.right.color == RED)
 				handleReorient(item);
 		}
 		// Insertion fails if already present
-		if (current != nullNode)
+		if (current != nullNode) {
 			return;
-		current = new RedBlackNode(item, nullNode, nullNode);
+		}
+			
+		current = new RedBlackNode<Data>(item, nullNode, nullNode);
 		// Attach to parent
-		if (item < parent.data)
+		if (item.compareTo(parent.data) < 0)
 			parent.left = current;
 		else
 			parent.right = current;
 		handleReorient(item);
 	}
 
-	private void handleReorient(int item) {
+	private void handleReorient(Data item) {
 		// Do the color flip
 		current.color = RED;
 		current.left.color = BLACK;
@@ -84,7 +76,7 @@ public class RedBlackTree {
 		if (parent.color == RED) {
 			// Have to rotate
 			grand.color = RED;
-			if (item < grand.data != item < parent.data)
+			if (item.compareTo(grand.data) < 0 != item.compareTo(parent.data) < 0)
 				parent = rotate(item, grand); // Start dbl rotate
 			current = rotate(item, great);
 			current.color = BLACK;
@@ -93,26 +85,26 @@ public class RedBlackTree {
 		header.right.color = BLACK;
 	}
 
-	private RedBlackNode rotate(int item, RedBlackNode parent) {
-		if (item < parent.data)
-			return parent.left = item < parent.left.data ? rotateWithLeftChild(parent.left)
+	private RedBlackNode<Data> rotate(Data item, RedBlackNode<Data> parent) {
+		if (item.compareTo(parent.data) < 0)
+			return parent.left = item.compareTo(parent.left.data) < 0 ? rotateWithLeftChild(parent.left)
 					: rotateWithRightChild(parent.left);
 		else
-			return parent.right = item < parent.right.data ? rotateWithLeftChild(parent.right)
+			return parent.right = item.compareTo(parent.right.data) < 0 ? rotateWithLeftChild(parent.right)
 					: rotateWithRightChild(parent.right);
 	}
 
 	/* Rotate binary tree node with left child */
-	private RedBlackNode rotateWithLeftChild(RedBlackNode k2) {
-		RedBlackNode k1 = k2.left;
+	private RedBlackNode<Data> rotateWithLeftChild(RedBlackNode<Data> k2) {
+		RedBlackNode<Data> k1 = k2.left;
 		k2.left = k1.right;
 		k1.right = k2;
 		return k1;
 	}
 
 	/* Rotate binary tree node with right child */
-	private RedBlackNode rotateWithRightChild(RedBlackNode k1) {
-		RedBlackNode k2 = k1.right;
+	private RedBlackNode<Data> rotateWithRightChild(RedBlackNode<Data> k1) {
+		RedBlackNode<Data> k2 = k1.right;
 		k1.right = k2.left;
 		k2.left = k1;
 		return k2;
@@ -123,7 +115,7 @@ public class RedBlackTree {
 		return countNodes(header.right);
 	}
 
-	private int countNodes(RedBlackNode r) {
+	private int countNodes(RedBlackNode<Data> r) {
 		if (r == nullNode)
 			return 0;
 		else {
@@ -135,17 +127,17 @@ public class RedBlackTree {
 	}
 
 	/* Functions to search for an data */
-	public boolean search(int val) {
+	public boolean search(Data val) {
 		return search(header.right, val);
 	}
 
-	private boolean search(RedBlackNode r, int val) {
+	private boolean search(RedBlackNode<Data> r, Data val) {
 		boolean found = false;
 		while ((r != nullNode) && !found) {
-			int rval = r.data;
-			if (val < rval)
+			Data rval = r.data;
+			if (val.compareTo(rval) < 0)
 				r = r.left;
-			else if (val > rval)
+			else if (val.compareTo(rval) > 0)
 				r = r.right;
 			else {
 				found = true;
@@ -161,7 +153,7 @@ public class RedBlackTree {
 		inorder(header.right);
 	}
 
-	private void inorder(RedBlackNode r) {
+	private void inorder(RedBlackNode<Data> r) {
 		if (r != nullNode) {
 			inorder(r.left);
 			char c = 'B';
@@ -177,7 +169,7 @@ public class RedBlackTree {
 		preorder(header.right);
 	}
 
-	private void preorder(RedBlackNode r) {
+	private void preorder(RedBlackNode<Data> r) {
 		if (r != nullNode) {
 			char c = 'B';
 			if (r.color == 0)
@@ -193,7 +185,7 @@ public class RedBlackTree {
 		postorder(header.right);
 	}
 
-	private void postorder(RedBlackNode r) {
+	private void postorder(RedBlackNode<Data> r) {
 		if (r != nullNode) {
 			postorder(r.left);
 			postorder(r.right);
@@ -202,6 +194,26 @@ public class RedBlackTree {
 				c = 'R';
 			System.out.print(r.data + "" + c + " ");
 		}
+	}
+	
+	public static class Datum implements Comparable<Datum>{
+
+		int x;
+		
+		public Datum(int x) {
+			this.x = x;
+		}
+		
+		@Override
+		public int compareTo(Datum o) {
+			return this.x - o.x;
+		}
+		
+		@Override
+		public String toString() {
+			return x + "";	
+		}
+		
 	}
 
 }

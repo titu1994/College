@@ -1,0 +1,10 @@
+SAMPLE	START	1000
+.	EX1	N1,N2
+-	LDA	?A
+-	STA	?B
+N1	RESW	1
+N2	RESW	1
+.	EX2	N3
+-	LDA	?C
+-	SET	?C
+-	END	-

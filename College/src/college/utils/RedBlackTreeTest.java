@@ -2,11 +2,14 @@ package college.utils;
 
 import java.util.Scanner;
 
+import college.utils.RedBlackTree.Datum;
+
 public class RedBlackTreeTest {
 
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
-        RedBlackTree rbt = new RedBlackTree(); 
+		
+        RedBlackTree<Datum> rbt = new RedBlackTree<Datum>(); 
         
         System.out.println("Red Black Tree Test\n");          
         char ch;
@@ -25,11 +28,11 @@ public class RedBlackTreeTest {
             {
             case 1 : 
                 System.out.println("Enter integer element to insert");
-                rbt.insert( scan.nextInt() );                     
+                rbt.insert(new Datum(scan.nextInt()));                     
                 break;                          
             case 2 : 
                 System.out.println("Enter integer element to search");
-                System.out.println("Search result : "+ rbt.search( scan.nextInt() ));
+                System.out.println("Search result : "+ rbt.search(new Datum(scan.nextInt())));
                 break;                                          
             case 3 : 
                 System.out.println("Nodes = "+ rbt.countNodes());
@@ -58,5 +61,7 @@ public class RedBlackTreeTest {
         } while (ch == 'Y'|| ch == 'y');  
 
 	}
+	
+	
 
 }

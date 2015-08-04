@@ -1,0 +1,8 @@
+0 EX1 &A,&B
+1 LDA ?A
+2 STA ?B
+3 MEND -
+4 EX2 &C
+5 LDA ?C
+6 SET ?C
+7 MEND -
