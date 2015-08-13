@@ -3,147 +3,105 @@ package college.sem7.css;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
 
 public class TranspositionCipher {
-
-	private static char columnar[][];
-	private static char permutationColumnar[][];
-
-	private static HashMap<Integer, Integer> keymap = new HashMap<>();
-	private static HashMap<Integer, Integer> inverseKeymap = new HashMap<>();
-
-	private static int colsize = 5;
-
+	
 	public static void main(String[] args) throws IOException{
+		char a[][] = new char[5][5];
+		char b[][] = new char[5][5];
+		char c[][] = new char[5][5];
+		char d[][] = new char[5][5];
+		char e[][] = new char[5][5];
+		char f[][] = new char[5][5];
+		char g[][] = new char[5][5];
+		char q[] = new char[5 * 5];
+		int key[] = new int[5];
 		BufferedReader bb = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print("Enter the input string : ");
-		String input = bb.readLine();
-		input = input.replace(" ",  "");
-		
-		//generateKeys(colsize);
-		keymap.put(2, 0); keymap.put(0, 1); keymap.put(3, 2); keymap.put(4, 3); keymap.put(1,  4);
-		inverseKeymap.put(0, 2); inverseKeymap.put(1, 0); inverseKeymap.put(2, 3); inverseKeymap.put(3, 4); inverseKeymap.put(4, 1);
-		
-		columnar = toColumnarForm(input);
-		columnar = shiftColumnarForm(columnar);
-		
-		String firstEncryptedString = columnarFormString(columnar);
-		System.out.println("First output : " + firstEncryptedString);
-		
-		permutationColumnar = toColumnarForm(firstEncryptedString);
-		permutationColumnar = shiftColumnarForm(permutationColumnar);
-		//printArr(permutationColumnar);
-		
-		String finalEncryptedString = columnarFormString(permutationColumnar);
-		System.out.println("Final Output : " + finalEncryptedString);
-		
-		System.out.println("Beginning decryption : ");
-		
-		permutationColumnar = reverseShiftColumnarForm(permutationColumnar);
-		printArr(permutationColumnar);
-		
-		String reversedString = columnarFormString(permutationColumnar);
-		System.out.println("First Decryption : " + reversedString);
-		
-		columnar = toColumnarForm(reversedString);
-		printArr(columnar);
-		columnar = reverseShiftColumnarForm(columnar);
-		
-		String finalDecryptedString = columnarFormString(columnar);
-		
-		System.out.println("Final Decrypted String : " + finalDecryptedString);
-		
-		
-	}
 
-	private static void generateKeys(int keysize) {
-		Random r = new Random();
-		int x = r.nextInt(keysize);
-		for(int i = 0; i < keysize; i++) {
-			while(keymap.containsValue(x))
-				x = r.nextInt(keysize);
-
-			keymap.put(i,  x);
-			inverseKeymap.put(x,  i);
+		System.out.println("Enter input string of max 25 characters without a space");
+		String w = bb.readLine();
+		w = w.replace(" ", "").trim();
+		
+		if(w.length() > 25) {
+			System.out.println("Cannnot accept greater than 25 characters.");
+			return;
 		}
-	}
-
-	private static char[][] toColumnarForm(String input) {
-		int rowsize = (int) Math.ceil(input.length() / (double) colsize);
 		
-		//System.out.println("String length : " + input.length() + " Row Size : " + rowsize);
-
-		char holder[][] = new char[rowsize][colsize];
-
-		for(int i = 0; i < rowsize; i++) {
-			for(int j = 0; j < colsize; j++) {
-				if(i * colsize + j < input.length()) 
-					holder[i][j] = input.charAt(i * colsize + j);
-				else 
-					holder[i][j] = '.';
+		System.arraycopy(w.toCharArray(), 0, q, 0, w.length());
+		
+		for (int i = w.length(); i < 25; i++)
+			q[i] = '.';
+		
+		System.out.println("Enter 5 digit key with a space in between digits");
+		String keys = bb.readLine();
+		String keyArr[] = keys.split(" ");
+		for (int i = 0; i < 5; i++) {
+			key[i] = Integer.parseInt(keyArr[i]);
+		}
+		
+		int i, j, k;
+		for (i = 0, k = 0; i < 5; i++) {
+			for (j = 0; j < 5; j++, k++) {
+				a[i][j] = q[k];
 			}
 		}
+		for (i = 0, k = 0; i < 5; i++) {
+			k = key[i] - 1;
+			for (j = 0; j < 5; j++) {
+				b[j][i] = a[j][k];
+			}
+		}
+		System.out.println("Encryption :");
+		System.out.print("Ct is :");
+		for (i = 0; i < 5; i++) {
+			for (j = 0; j < 5; j++)
+				System.out.print("" + b[j][i]);
+		}
+		for (i = 0; i < 5; i++) {
+			for (j = 0; j < 5; j++)
+				c[i][j] = b[j][i];
+		}
+		for (i = 0, k = 0; i < 5; i++) {
+			k = key[i] - 1;
+			for (j = 0; j < 5; j++) {
+				d[j][i] = c[j][k];
+			}
+		}
+		System.out.println();
+		System.out.print("Ct2 is :");
+		for (i = 0; i < 5; i++) {
+			for (j = 0; j < 5; j++)
+				System.out.print("" + d[j][i]);
+		}
+		System.out.println();
+		System.out.println("Decryption :");
+		for (i = 0, k = 0; i < 5; i++) {
+			k = key[i] - 1;
+			for (j = 0; j < 5; j++) {
+				e[j][k] = d[j][i];
+			}
+		}
+		for (i = 0; i < 5; i++) {
+			for (j = 0; j < 5; j++)
+				f[i][j] = e[j][i];
+		}
+		System.out.print("Ctdecrpt is :");
+		for (i = 0; i < 5; i++) {
+			for (j = 0; j < 5; j++)
+				System.out.print("" + f[j][i]);
+		}
+		System.out.println();
+		for (i = 0, k = 0; i < 5; i++) {
+			k = key[i] - 1;
+			for (j = 0; j < 5; j++) {
+				g[j][k] = f[j][i];
+			}
+		}
+		System.out.print("MsgDecrypt is :");
+		for (i = 0; i < 5; i++) {
+			for (j = 0; j < 5; j++)
+				System.out.print("" + g[i][j]);
+		}
 
-		return holder;
 	}
-	
-	private static char[][] shiftColumnarForm(char input[][]) {
-		char output[][] = new char[input.length][colsize];
-		int i = 0, j = 0;
-		
-		Set<Entry<Integer, Integer>> entries = keymap.entrySet();
-		for(Entry<Integer, Integer> entry : entries) {
-			int col = entry.getValue();
-			for(int row = 0; row < input.length; row++) {
-				output[row][col] = input[i++ % input.length][j];
-			}
-			j++;
-		}
-		
-		return output;
-	}
-	
-	private static void printArr(char x[][]) {
-		StringBuilder sb = new StringBuilder();
-		
-		for(int i = 0; i < x.length; i++)  {
-			for(int j = 0; j < x[i].length; j++) {
-				sb.append(x[i][j]);
-			}
-			sb.append("\n");
-		}
-		System.out.println(sb);
-	}
-	
-	private static char[][] reverseShiftColumnarForm(char input[][]) {
-		char output[][] = new char[input.length][colsize];
-		int i = 0, j = 0;
-		
-		Set<Entry<Integer, Integer>> entries = inverseKeymap.entrySet();
-		for(Entry<Integer, Integer> entry : entries) {
-			int col = entry.getValue();
-			for(int row = 0; row < input.length; row++) {
-				output[row][col] = input[i++ % input.length][j];
-			}
-			j++;
-		}
-		
-		return output;
-	}
-
-	private static String columnarFormString(char input[][]) {
-		StringBuffer sb = new StringBuffer();
-		
-		for(int i = 0; i < input[0].length; i++) {
-			for(int j = 0; j < input.length; j++) {
-				sb.append(input[j][i]);
-			}
-		}
-		return sb.toString();
-	}
-
 }
