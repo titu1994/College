@@ -19,22 +19,22 @@ public class BlowfishSecurity {
 	
 	private static final int KEY_SIZE = 128;
 
-	private static KeyGenerator KEY;
+	private static KeyGenerator keygen;
 	private static SecretKey secretKey;
-	private static Cipher encryptCipher;
-	private static Cipher decryptCipher;
+	private static Cipher encipher;
+	private static Cipher decipher;
 	
 	static {
 		try {
-			KEY = KeyGenerator.getInstance("Blowfish");
-			KEY.init(KEY_SIZE);
-			secretKey = KEY.generateKey();
-			///ECB/PKCS5Padding
-			encryptCipher = Cipher.getInstance("Blowfish");
-			encryptCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+			keygen = KeyGenerator.getInstance("Blowfish");
+			keygen.init(KEY_SIZE);
+			secretKey = keygen.generateKey();
 			
-			decryptCipher = Cipher.getInstance("Blowfish");
-			decryptCipher.init(Cipher.DECRYPT_MODE, secretKey);
+			encipher = Cipher.getInstance("Blowfish");
+			encipher.init(Cipher.ENCRYPT_MODE, secretKey);
+			
+			decipher = Cipher.getInstance("Blowfish");
+			decipher.init(Cipher.DECRYPT_MODE, secretKey);
 		} catch (NoSuchAlgorithmException e) {
 			System.out.println("Could not load Blowfish Algorithm");
 			System.exit(0);
@@ -65,7 +65,7 @@ public class BlowfishSecurity {
 		
 		try {
 			byte hold[] = input.getBytes("UTF8");
-			byte encryptedBytes[] = encryptCipher.doFinal(hold);
+			byte encryptedBytes[] = encipher.doFinal(hold);
 			output = Base64.getEncoder().encodeToString(encryptedBytes);
 			
 		} catch (IllegalBlockSizeException e) {
@@ -84,7 +84,7 @@ public class BlowfishSecurity {
 		byte decryptedBytes[];
 		try {
 			byte hold[] = Base64.getDecoder().decode(input);
-			decryptedBytes = decryptCipher.doFinal(hold);
+			decryptedBytes = decipher.doFinal(hold);
 			output = new String(decryptedBytes);
 			
 		} catch (IllegalBlockSizeException e) {
