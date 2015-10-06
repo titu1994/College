@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -64,7 +65,7 @@ public class BlowfishSecurity {
 		String output = "";
 		
 		try {
-			byte hold[] = input.getBytes("UTF8");
+			byte hold[] = input.getBytes(StandardCharsets.UTF_8);
 			byte encryptedBytes[] = encipher.doFinal(hold);
 			output = Base64.getEncoder().encodeToString(encryptedBytes);
 			
@@ -72,9 +73,7 @@ public class BlowfishSecurity {
 			e.printStackTrace();
 		} catch (BadPaddingException e) {
 			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		} 
 		return output;
 	}
 	
