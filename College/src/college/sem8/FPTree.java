@@ -7,12 +7,8 @@ import java.util.*;
  */
 public class FPTree {
 
-    private static int ids[] = {1, 2, 3, 4,5,6,7,8};
     private static String items[] = {"EADB", "DACEB", "CABE", "BAD", "D", "DB", "ADE", "BC"};
     private static String sortedItems[];
-
-    private static int n;
-    private static final Scanner sc = new Scanner(System.in);
 
     private static Pair[] counts;
 
@@ -185,10 +181,6 @@ public class FPTree {
     public static void main(String[] args) {
         initCounter();
         initSortedItems();
-
-        //System.out.println(Arrays.toString(counts));
-        //System.out.println(Arrays.toString(sortedItems));
-
         Trie trie = new Trie();
 
         for(String sitems : sortedItems) {
