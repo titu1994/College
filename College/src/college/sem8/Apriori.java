@@ -143,8 +143,6 @@ public class Apriori {
                 rules[i+3].associations = new String[] {"" + rulePos[(i)%3]};
             }
         }
-
-
     }
 
     public static void computeSupportRule() {
@@ -193,6 +191,18 @@ public class Apriori {
         if (k == arr.size() - 1){
             rulePermutations.add(arr.toArray(new Integer[0]));
         }
+    }
+
+    public static void removeMinimumConfidenceRules(double minConfidence) {
+        ArrayList<Rule> ruleList = new ArrayList<>();
+
+        for(Rule r : rules) {
+            if(r.confidence >= minConfidence)
+                ruleList.add(r);
+        }
+
+        rules = ruleList.toArray(new Rule[0]);
+        System.out.println("Min Confidence Rule List : " + Arrays.toString(rules));
     }
 
     private static class Pair {
@@ -279,6 +289,11 @@ public class Apriori {
 
         getRules();
         computeSupportRule();
+
+        System.out.print("\nEnter minimum confidence : ");
+        double minConfidence = sc.nextDouble();
+
+        removeMinimumConfidenceRules(minConfidence);
 
     }
 
